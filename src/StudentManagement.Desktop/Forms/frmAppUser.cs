@@ -1,8 +1,8 @@
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 using System;
 using System.ComponentModel;
@@ -19,7 +19,7 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmAppUser : Form
     {
-        private AuthService? _auth;
+        private readonly AuthManager _auth = new AuthManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmAppUser()
@@ -27,14 +27,6 @@ namespace StudentManagement.Desktop.Forms
             InitializeComponent();
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
-        }
-
-        public frmAppUser(AuthService auth) : this()
-        {
-            _auth = auth;
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
-            cboRole.DataSource = System.Enum.GetValues(typeof(StudentManagement.Domain.Enums.UserRole));
             Load += async (s, e) => await RefreshUsersAsync();
         }
 

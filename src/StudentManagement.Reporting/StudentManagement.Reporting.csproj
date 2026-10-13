@@ -12,7 +12,6 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StudentManagement.Domain\StudentManagement.Domain.csproj" />
-    <ProjectReference Include="..\StudentManagement.Application\StudentManagement.Application.csproj" />
+    <ProjectReference Include="..\StudentManagement.UserObjects\StudentManagement.UserObjects.csproj" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
 using StudentManagement.Reporting.Generators;
@@ -19,8 +19,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmStudentLedger : Form
     {
-        private StudentService? _students;
-        private FeeService? _fees;
+        private readonly StudentManager _students = new StudentManager();
+        private readonly FeeManager _fees = new FeeManager();
         private List<StudentDto> _lookup = new();
         private LedgerSummaryDto? _summary;
         private IReadOnlyList<LedgerEntryDto> _entries = Array.Empty<LedgerEntryDto>();
@@ -31,16 +31,7 @@ namespace StudentManagement.Desktop.Forms
             InitializeComponent();
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
-        }
-
-        public frmStudentLedger(StudentService students, FeeService fees) : this()
-        {
-            _students = students;
-            _fees = fees;
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadStudentsAsync();
-            dgvLedger.CellFormatting += dgvLedger_CellFormatting;
         }
 
         private async Task LoadStudentsAsync()

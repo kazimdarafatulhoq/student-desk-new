@@ -2,18 +2,18 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 namespace StudentManagement.Desktop.Forms
 {
     [DesignerCategory("Form")]
     public partial class frmLogin : Form
     {
-        private AuthService? _auth;
+        private readonly AuthManager _auth = new AuthManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmLogin()
@@ -22,27 +22,18 @@ namespace StudentManagement.Desktop.Forms
             if (!DesignTime.IsActive)
             {
                 UITheme.ApplyForm(this);
-                // Login card matches the form body (no elevated card fill).
-                pnlCard.BackColor = UITheme.Canvas;
-            }
-        }
-
-        public frmLogin(AuthService auth) : this()
-        {
-            _auth = auth;
-            if (!DesignTime.IsActive)
-            {
-                UITheme.ApplyForm(this);
                 pnlCard.BackColor = UITheme.Canvas;
             }
             AcceptButton = btnLogin;
             if (AppSession.OfflineMode)
             {
-                lblHint.Text = "Design mode (no database) — admin / Admin@123";
+                lblHint.Text = "Design mode (no database) — use demo users / passwords";
                 lblStatus.Text = "OfflineMode: SQL Server disconnected";
                 lblStatus.ForeColor = UITheme.Warning;
             }
         }
+
+
 
         private async void btnLogin_Click(object? sender, EventArgs e)
         {
@@ -55,33 +46,11 @@ namespace StudentManagement.Desktop.Forms
                 string user = txtUsername.Text.Trim();
                 string pass = txtPassword.Text;
 
-                AuthSession session;
-                if (AppSession.OfflineMode)
+                AuthSession session = await _auth.LoginAsync(new LoginRequest
                 {
-                    if (!string.Equals(user, "admin", StringComparison.OrdinalIgnoreCase) || pass != "Admin@123")
-                        throw new UnauthorizedAccessException("Invalid username or password.");
-
-                    session = new AuthSession
-                    {
-                        UserId = 1,
-                        Username = "admin",
-                        FullName = "System Super Admin",
-                        Role = UserRole.SuperAdmin,
-                        AcademicSession = "2025-2026",
-                        LoginAt = DateTime.Now
-                    };
-                }
-                else
-                {
-                    if (_auth == null)
-                        throw new InvalidOperationException("Authentication service is not available.");
-
-                    session = await _auth.LoginAsync(new LoginRequest
-                    {
-                        Username = user,
-                        Password = pass
-                    });
-                }
+                    Username = user,
+                    Password = pass
+                });
 
                 AppSession.Set(session);
                 DialogResult = DialogResult.OK;

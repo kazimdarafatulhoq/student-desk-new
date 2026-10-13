@@ -5,15 +5,15 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A448E756-4B4B-468A-839E-AB00050993C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Domain", "src\StudentManagement.Domain\StudentManagement.Domain.csproj", "{CB322A5E-D042-4DD2-A01F-3CF20A94936C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.UserObjects", "src\StudentManagement.UserObjects\StudentManagement.UserObjects.csproj", "{B1A1A1A1-1111-4111-8111-111111111111}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Application", "src\StudentManagement.Application\StudentManagement.Application.csproj", "{08EDE753-E1C1-4261-A05B-EB68B23F904F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.DataAccessLayer", "src\StudentManagement.DataAccessLayer\StudentManagement.DataAccessLayer.csproj", "{B2A2A2A2-2222-4222-8222-222222222222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Infrastructure", "src\StudentManagement.Infrastructure\StudentManagement.Infrastructure.csproj", "{4BFB21A8-AD03-4353-8F53-0E08CFD87385}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.BusinessLayer", "src\StudentManagement.BusinessLayer\StudentManagement.BusinessLayer.csproj", "{B3A3A3A3-3333-4333-8333-333333333333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Reporting", "src\StudentManagement.Reporting\StudentManagement.Reporting.csproj", "{FEE57509-6C12-4B82-ACB9-73E265D3338B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Reporting", "src\StudentManagement.Reporting\StudentManagement.Reporting.csproj", "{B4A4A4A4-4444-4444-8444-444444444444}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Desktop", "src\StudentManagement.Desktop\StudentManagement.Desktop.csproj", "{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement.Desktop", "src\StudentManagement.Desktop\StudentManagement.Desktop.csproj", "{B5A5A5A5-5555-4555-8555-555555555555}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,32 +24,32 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CB322A5E-D042-4DD2-A01F-3CF20A94936C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB322A5E-D042-4DD2-A01F-3CF20A94936C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB322A5E-D042-4DD2-A01F-3CF20A94936C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB322A5E-D042-4DD2-A01F-3CF20A94936C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08EDE753-E1C1-4261-A05B-EB68B23F904F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08EDE753-E1C1-4261-A05B-EB68B23F904F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08EDE753-E1C1-4261-A05B-EB68B23F904F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08EDE753-E1C1-4261-A05B-EB68B23F904F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BFB21A8-AD03-4353-8F53-0E08CFD87385}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BFB21A8-AD03-4353-8F53-0E08CFD87385}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BFB21A8-AD03-4353-8F53-0E08CFD87385}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BFB21A8-AD03-4353-8F53-0E08CFD87385}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FEE57509-6C12-4B82-ACB9-73E265D3338B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FEE57509-6C12-4B82-ACB9-73E265D3338B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FEE57509-6C12-4B82-ACB9-73E265D3338B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FEE57509-6C12-4B82-ACB9-73E265D3338B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1A1A1A1-1111-4111-8111-111111111111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1A1A1A1-1111-4111-8111-111111111111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1A1A1A1-1111-4111-8111-111111111111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1A1A1A1-1111-4111-8111-111111111111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2A2A2A2-2222-4222-8222-222222222222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2A2A2A2-2222-4222-8222-222222222222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2A2A2A2-2222-4222-8222-222222222222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2A2A2A2-2222-4222-8222-222222222222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A3A3A3-3333-4333-8333-333333333333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A3A3A3-3333-4333-8333-333333333333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A3A3A3-3333-4333-8333-333333333333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A3A3A3-3333-4333-8333-333333333333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4A4A4A4-4444-4444-8444-444444444444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4A4A4A4-4444-4444-8444-444444444444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4A4A4A4-4444-4444-8444-444444444444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4A4A4A4-4444-4444-8444-444444444444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5A5A5A5-5555-4555-8555-555555555555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5A5A5A5-5555-4555-8555-555555555555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5A5A5A5-5555-4555-8555-555555555555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5A5A5A5-5555-4555-8555-555555555555}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CB322A5E-D042-4DD2-A01F-3CF20A94936C} = {A448E756-4B4B-468A-839E-AB00050993C0}
-		{08EDE753-E1C1-4261-A05B-EB68B23F904F} = {A448E756-4B4B-468A-839E-AB00050993C0}
-		{4BFB21A8-AD03-4353-8F53-0E08CFD87385} = {A448E756-4B4B-468A-839E-AB00050993C0}
-		{FEE57509-6C12-4B82-ACB9-73E265D3338B} = {A448E756-4B4B-468A-839E-AB00050993C0}
-		{66A1CA9E-074E-4B8F-95D3-F7DAC2920B04} = {A448E756-4B4B-468A-839E-AB00050993C0}
+		{B1A1A1A1-1111-4111-8111-111111111111} = {A448E756-4B4B-468A-839E-AB00050993C0}
+		{B2A2A2A2-2222-4222-8222-222222222222} = {A448E756-4B4B-468A-839E-AB00050993C0}
+		{B3A3A3A3-3333-4333-8333-333333333333} = {A448E756-4B4B-468A-839E-AB00050993C0}
+		{B4A4A4A4-4444-4444-8444-444444444444} = {A448E756-4B4B-468A-839E-AB00050993C0}
+		{B5A5A5A5-5555-4555-8555-555555555555} = {A448E756-4B4B-468A-839E-AB00050993C0}
 	EndGlobalSection
 EndGlobal

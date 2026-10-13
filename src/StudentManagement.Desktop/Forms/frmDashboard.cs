@@ -1,8 +1,8 @@
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 using System;
 using System.ComponentModel;
@@ -15,8 +15,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmDashboard : Form
     {
-        private StudentService? _students;
-        private FeeService? _fees;
+        private readonly StudentManager _students = new StudentManager();
+        private readonly FeeManager _fees = new FeeManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmDashboard()
@@ -25,14 +25,6 @@ namespace StudentManagement.Desktop.Forms
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
             Load += frmDashboard_LoadLayout;
-        }
-
-        public frmDashboard(StudentService students, FeeService fees) : this()
-        {
-            _students = students;
-            _fees = fees;
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadStatsAsync();
         }
 

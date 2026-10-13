@@ -1,8 +1,8 @@
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 using System;
 using System.ComponentModel;
@@ -16,8 +16,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmFeeCollection : Form
     {
-        private StudentService? _students;
-        private FeeService? _fees;
+        private readonly StudentManager _students = new StudentManager();
+        private readonly FeeManager _fees = new FeeManager();
         private StudentDto? _student;
         private List<CheckBox> _monthChecks = new();
 
@@ -27,20 +27,8 @@ namespace StudentManagement.Desktop.Forms
             InitializeComponent();
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
-        }
-
-        public frmFeeCollection(StudentService students, FeeService fees) : this()
-        {
-            _students = students;
-            _fees = fees;
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
-            cboPaymentMethod.DataSource = System.Enum.GetValues(typeof(PaymentMethod));
             BuildMonthMatrix();
             WireOptionalFeeEvents();
-            txtFine.TextChanged += (s, e) => Recalc();
-            txtWaiver.TextChanged += (s, e) => Recalc();
-            txtTuitionUnit.TextChanged += (s, e) => Recalc();
         }
 
         private void WireOptionalFeeEvents()
@@ -65,7 +53,7 @@ namespace StudentManagement.Desktop.Forms
         {
             flpMonths.Controls.Clear();
             _monthChecks.Clear();
-            foreach (var month in FeeService.BuildMonthMatrix(DateTime.Now.Year))
+            foreach (var month in FeeManager.BuildMonthMatrix(DateTime.Now.Year))
             {
                 var chk = new CheckBox
                 {
@@ -157,7 +145,7 @@ namespace StudentManagement.Desktop.Forms
             var otherFees = ReadOptionalFees();
             var otherTotal = otherFees.Sum(f => f.Amount);
             var tuition = unit * months;
-            var net = FeeService.CalculateNetPayable(tuition, fine, waiver, otherTotal);
+            var net = FeeManager.CalculateNetPayable(tuition, fine, waiver, otherTotal);
             lblTuitionTotal.Text = otherTotal > 0
                 ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}"
                 : $"Tuition: ৳ {tuition:N2}";

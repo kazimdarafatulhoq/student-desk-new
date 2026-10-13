@@ -7,19 +7,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Security;
-using StudentManagement.Application.Services;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer.Security;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 namespace StudentManagement.Desktop.Forms
 {
     [DesignerCategory("Form")]
     public partial class frmStudentAdmission : Form
     {
-        private StudentService? _students;
+        private readonly StudentManager _students = new StudentManager();
         private string? _selectedPhotoPath;
         private int? _editStudentId;
         private string? _existingPhotoPath;
@@ -38,13 +38,6 @@ namespace StudentManagement.Desktop.Forms
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
             ApplyModeChrome(editMode: false);
-        }
-
-        public frmStudentAdmission(StudentService students) : this()
-        {
-            _students = students;
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
             dtpDateOfBirth.ValueChanged += (s, e) => UpdateAge();
             Load += async (s, e) =>
             {
@@ -56,7 +49,7 @@ namespace StudentManagement.Desktop.Forms
         }
 
         /// <summary>Edit existing student (opened from Student Directory).</summary>
-        public frmStudentAdmission(StudentService students, int studentId) : this(students)
+        public frmStudentAdmission(int studentId) : this()
         {
             _editStudentId = studentId;
             ApplyModeChrome(editMode: true);

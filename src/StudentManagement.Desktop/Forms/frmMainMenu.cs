@@ -2,38 +2,23 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Extensions.DependencyInjection;
-using StudentManagement.Application.Interfaces;
-using StudentManagement.Application.Services;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Enums;
+using StudentManagement.UserObjects.Enums;
 
 namespace StudentManagement.Desktop.Forms
 {
     [DesignerCategory("Form")]
     public partial class frmMainMenu : Form
     {
-        private IServiceScope? _scope;
         private Form? _activeChild;
         private bool _sidebarExpanded = true;
         private System.Windows.Forms.Timer? _clockTimer;
 
-        /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmMainMenu()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-            {
-                UITheme.ApplyForm(this);
-                ApplyNavIcons();
-                ApplySidebarLayout(true);
-            }
-        }
-
-        public frmMainMenu(IServiceProvider services) : this()
-        {
-            _scope = services.CreateScope();
             if (!DesignTime.IsActive)
             {
                 UITheme.ApplyForm(this);
@@ -75,20 +60,6 @@ namespace StudentManagement.Desktop.Forms
                 _clockTimer = null;
             }
 
-            var scope = _scope;
-            _scope = null;
-            if (scope == null)
-                return;
-
-            try
-            {
-                scope.Dispose();
-            }
-            catch
-            {
-                // MS.DI can throw if a scoped service only implements IAsyncDisposable.
-                // App is closing / restarting — swallow so Sign Out does not crash.
-            }
         }
 
         private async void frmMainMenu_Load(object? sender, EventArgs e)
@@ -127,12 +98,12 @@ namespace StudentManagement.Desktop.Forms
             if (AppSession.Current == null)
                 return;
             UserRole role = AppSession.Current.Role;
-            btnAdmission.Visible = AuthService.CanAccess(role, "Admission");
-            btnFeeCollection.Visible = AuthService.CanAccess(role, "FeeCollection");
-            btnLedger.Visible = AuthService.CanAccess(role, "Ledger");
-            btnExamClearance.Visible = AuthService.CanAccess(role, "ExamClearance");
-            btnAdmitCard.Visible = AuthService.CanAccess(role, "AdmitCard");
-            btnUsers.Visible = AuthService.CanAccess(role, "Users");
+            btnAdmission.Visible = AuthManager.CanAccess(role, "Admission");
+            btnFeeCollection.Visible = AuthManager.CanAccess(role, "FeeCollection");
+            btnLedger.Visible = AuthManager.CanAccess(role, "Ledger");
+            btnExamClearance.Visible = AuthManager.CanAccess(role, "ExamClearance");
+            btnAdmitCard.Visible = AuthManager.CanAccess(role, "AdmitCard");
+            btnUsers.Visible = AuthManager.CanAccess(role, "Users");
         }
 
         private async System.Threading.Tasks.Task RefreshDbStatusAsync()
@@ -147,11 +118,7 @@ namespace StudentManagement.Desktop.Forms
                     return;
                 }
 
-                if (_scope == null)
-                    return;
-
-                IUnitOfWork uow = _scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                bool ok = await uow.TestConnectionAsync();
+                bool ok = await new AuthManager().TestConnectionAsync();
                 lblDbStatus.Text = ok ? "Database: Connected" : "Database: Offline";
                 lblDbStatus.ForeColor = ok ? UITheme.Success : UITheme.Danger;
                 lblSync.Text = ok ? "Ledger sync: Live" : "Ledger sync: Paused";
@@ -163,14 +130,10 @@ namespace StudentManagement.Desktop.Forms
             }
         }
 
-        private void OpenChild<T>() where T : Form
+        private void OpenChild<T>() where T : Form, new()
         {
-            if (_scope == null)
-                return;
-
-            Form form = _scope.ServiceProvider.GetRequiredService<T>();
+            Form form = new T();
             ShowInContent(form, typeof(T).Name);
-
             WireStudentDirectoryEvents(form as frmStudentSearch);
         }
 
@@ -204,14 +167,12 @@ namespace StudentManagement.Desktop.Forms
         /// <summary>Open Edit Student Profile inside the main content panel (not a popup).</summary>
         private void OpenStudentEditor(int studentId)
         {
-            if (_scope == null || studentId <= 0)
+            if (studentId <= 0)
                 return;
 
-            StudentService students = _scope.ServiceProvider.GetRequiredService<StudentService>();
-            frmStudentAdmission editor = new frmStudentAdmission(students, studentId);
+            frmStudentAdmission editor = new frmStudentAdmission(studentId);
             editor.EditCompleted += OnStudentEditCompleted;
             ShowInContent(editor, nameof(frmStudentAdmission));
-            // Keep Student Directory nav highlighted for edit-from-directory context.
             HighlightNav(nameof(frmStudentSearch));
         }
 
@@ -454,7 +415,6 @@ namespace StudentManagement.Desktop.Forms
         private void btnLogout_Click(object? sender, EventArgs e)
         {
             AppSession.Clear();
-            // Dispose DI scope before restart so FormClosed does not hit a half-torn-down provider.
             ReleaseScopeAndTimer();
             System.Windows.Forms.Application.Restart();
         }

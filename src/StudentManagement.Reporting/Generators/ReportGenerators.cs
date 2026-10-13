@@ -4,7 +4,8 @@ using CsvHelper;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using StudentManagement.Application.DTOs;
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.UserObjects.Enums;
 
 using System;
 using System.Collections.Generic;

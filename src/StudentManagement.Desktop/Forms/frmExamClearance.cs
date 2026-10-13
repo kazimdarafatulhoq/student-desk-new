@@ -1,8 +1,9 @@
-using StudentManagement.Application.DTOs;
-using StudentManagement.Application.Services;
+
+using StudentManagement.UserObjects.Objects;
+using StudentManagement.BusinessLayer;
 using StudentManagement.Desktop.Helpers;
 using StudentManagement.Desktop.Theme;
-using StudentManagement.Domain.Entities;
+
 
 using System;
 using System.ComponentModel;
@@ -16,8 +17,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmExamClearance : Form
     {
-        private StudentService? _students;
-        private ExamService? _exams;
+        private readonly StudentManager _students = new StudentManager();
+        private readonly ExamManager _exams = new ExamManager();
         private List<StudentDto> _lookup = new();
         private List<ExamTerm> _terms = new();
         private List<ClassDto> _classes = new();
@@ -27,14 +28,6 @@ namespace StudentManagement.Desktop.Forms
         public frmExamClearance()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
-        }
-
-        public frmExamClearance(StudentService students, ExamService exams) : this()
-        {
-            _students = students;
-            _exams = exams;
             if (!DesignTime.IsActive)
                 UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadDataAsync();

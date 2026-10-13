@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using StudentManagement.Application.DTOs;
+using StudentManagement.UserObjects.Objects;
 
 namespace StudentManagement.Desktop.Forms
 {
