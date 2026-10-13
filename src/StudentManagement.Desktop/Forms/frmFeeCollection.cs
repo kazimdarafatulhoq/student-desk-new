@@ -92,6 +92,17 @@ namespace StudentManagement.Desktop.Forms
                 list.Add(new NamedFeeAmount { Name = name, Amount = amount });
         }
 
+        /// <summary>Enter in the search box runs Quick Search (same as the button).</summary>
+        private void txtSearch_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            btnFind.PerformClick();
+        }
+
         private async void btnFind_Click(object? sender, EventArgs e)
         {
             if (DesignTime.IsActive)

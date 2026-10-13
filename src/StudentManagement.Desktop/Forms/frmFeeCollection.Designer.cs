@@ -143,6 +143,7 @@ namespace StudentManagement.Desktop.Forms
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(360, 23);
             this.txtSearch.TabIndex = 0;
+            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
             // btnFind
             this.btnFind.Location = new System.Drawing.Point(400, 12);
             this.btnFind.Name = "btnFind";
