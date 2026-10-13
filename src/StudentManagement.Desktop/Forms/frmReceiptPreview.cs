@@ -35,12 +35,11 @@ namespace StudentManagement.Desktop.Forms
         public frmReceiptPreview()
         {
             InitializeComponent();
-            
+            _receipt = new FeeCollectionResult();
+            _institution = AppSession.InstitutionName;
+            _campus = AppSession.InstitutionCampus;
             if (DesignTime.IsActive)
                 return;
-            _receipt = new FeeCollectionResult();
-                        _institution = AppSession.InstitutionName;
-                        _campus = AppSession.InstitutionCampus;
         }
 
         public frmReceiptPreview(FeeCollectionResult receipt, string? institutionName = null, string? campusAddress = null)
