@@ -13,17 +13,17 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmLogin : Form
     {
-        private readonly AuthManager _auth = new AuthManager();
+        private AuthManager? _auth;
+        private AuthManager Auth => _auth ??= new AuthManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmLogin()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-            {
-                UITheme.ApplyForm(this);
-                pnlCard.BackColor = UITheme.Canvas;
-            }
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
+            pnlCard.BackColor = UITheme.Canvas;
             AcceptButton = btnLogin;
             if (AppSession.OfflineMode)
             {
@@ -46,7 +46,7 @@ namespace StudentManagement.Desktop.Forms
                 string user = txtUsername.Text.Trim();
                 string pass = txtPassword.Text;
 
-                AuthSession session = await _auth.LoginAsync(new LoginRequest
+                AuthSession session = await Auth.LoginAsync(new LoginRequest
                 {
                     Username = user,
                     Password = pass

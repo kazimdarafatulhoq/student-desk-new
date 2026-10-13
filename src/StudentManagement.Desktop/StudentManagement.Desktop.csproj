@@ -9,16 +9,22 @@
     <StartupObject>StudentManagement.Desktop.Program</StartupObject>
     <RootNamespace>StudentManagement.Desktop</RootNamespace>
     <AssemblyName>StudentManagement.Desktop</AssemblyName>
+    <!-- Helps Visual Studio attach the WinForms designer to SDK-style projects -->
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\StudentManagement.BusinessLayer\StudentManagement.BusinessLayer.csproj" />
     <ProjectReference Include="..\StudentManagement.UserObjects\StudentManagement.UserObjects.csproj" />
     <ProjectReference Include="..\StudentManagement.DataAccessLayer\StudentManagement.DataAccessLayer.csproj" />
     <ProjectReference Include="..\StudentManagement.Reporting\StudentManagement.Reporting.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
   </ItemGroup>
+
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -26,5 +32,128 @@
     <None Update="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <!-- Explicit Form / Designer nesting so VS shows Design view -->
+  <ItemGroup>
+    <Compile Update="Forms\frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmLogin.Designer.cs">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmLogin.resx">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmMainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmMainMenu.Designer.cs">
+      <DependentUpon>frmMainMenu.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmMainMenu.resx">
+      <DependentUpon>frmMainMenu.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmDashboard.Designer.cs">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmDashboard.resx">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmStudentAdmission.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmStudentAdmission.Designer.cs">
+      <DependentUpon>frmStudentAdmission.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmStudentAdmission.resx">
+      <DependentUpon>frmStudentAdmission.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmStudentSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmStudentSearch.Designer.cs">
+      <DependentUpon>frmStudentSearch.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmStudentSearch.resx">
+      <DependentUpon>frmStudentSearch.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmFeeCollection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmFeeCollection.Designer.cs">
+      <DependentUpon>frmFeeCollection.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmFeeCollection.resx">
+      <DependentUpon>frmFeeCollection.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmStudentLedger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmStudentLedger.Designer.cs">
+      <DependentUpon>frmStudentLedger.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmStudentLedger.resx">
+      <DependentUpon>frmStudentLedger.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmExamClearance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmExamClearance.Designer.cs">
+      <DependentUpon>frmExamClearance.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmExamClearance.resx">
+      <DependentUpon>frmExamClearance.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmAdmitCardPrint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmitCardPrint.Designer.cs">
+      <DependentUpon>frmAdmitCardPrint.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmAdmitCardPrint.resx">
+      <DependentUpon>frmAdmitCardPrint.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmAppUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAppUser.Designer.cs">
+      <DependentUpon>frmAppUser.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmAppUser.resx">
+      <DependentUpon>frmAppUser.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmReceiptPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmReceiptPreview.Designer.cs">
+      <DependentUpon>frmReceiptPreview.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmReceiptPreview.resx">
+      <DependentUpon>frmReceiptPreview.cs</DependentUpon>
+    </EmbeddedResource>
+
+    <Compile Update="Forms\frmAdmitCardPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmitCardPreview.Designer.cs">
+      <DependentUpon>frmAdmitCardPreview.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Forms\frmAdmitCardPreview.resx">
+      <DependentUpon>frmAdmitCardPreview.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

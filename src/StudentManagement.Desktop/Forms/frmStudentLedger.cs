@@ -19,8 +19,10 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmStudentLedger : Form
     {
-        private readonly StudentManager _students = new StudentManager();
-        private readonly FeeManager _fees = new FeeManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
+        private FeeManager? _fees;
+        private FeeManager Fees => _fees ??= new FeeManager();
         private List<StudentDto> _lookup = new();
         private LedgerSummaryDto? _summary;
         private IReadOnlyList<LedgerEntryDto> _entries = Array.Empty<LedgerEntryDto>();
@@ -29,17 +31,18 @@ namespace StudentManagement.Desktop.Forms
         public frmStudentLedger()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadStudentsAsync();
         }
 
         private async Task LoadStudentsAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
-            _lookup = (await _students.GetLookupAsync()).ToList();
+            _lookup = (await Students.GetLookupAsync()).ToList();
             cboStudent.DisplayMember = "Display";
             cboStudent.ValueMember = nameof(StudentDto.StudentId);
             cboStudent.DataSource = _lookup.Select(s => new
@@ -58,11 +61,11 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadLedgerAsync(int studentId)
         {
-            if (_fees == null)
+            if (DesignTime.IsActive)
                 return;
 
-            _summary = await _fees.GetSummaryAsync(studentId);
-            _entries = await _fees.GetLedgerDetailedAsync(studentId);
+            _summary = await Fees.GetSummaryAsync(studentId);
+            _entries = await Fees.GetLedgerDetailedAsync(studentId);
 
             lblInvoiced.Text = $"৳ {_summary.TotalInvoiced:N2}";
             lblPaid.Text = $"৳ {_summary.TotalPaid:N2}";

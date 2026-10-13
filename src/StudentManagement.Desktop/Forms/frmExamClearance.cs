@@ -17,8 +17,10 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmExamClearance : Form
     {
-        private readonly StudentManager _students = new StudentManager();
-        private readonly ExamManager _exams = new ExamManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
+        private ExamManager? _exams;
+        private ExamManager Exams => _exams ??= new ExamManager();
         private List<StudentDto> _lookup = new();
         private List<ExamTerm> _terms = new();
         private List<ClassDto> _classes = new();
@@ -28,28 +30,29 @@ namespace StudentManagement.Desktop.Forms
         public frmExamClearance()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadDataAsync();
         }
 
         private async Task LoadDataAsync()
         {
-            if (_students == null || _exams == null)
+            if (DesignTime.IsActive)
                 return;
 
             _suppressStudentFilter = true;
             try
             {
-                _lookup = (await _students.GetLookupAsync()).ToList();
+                _lookup = (await Students.GetLookupAsync()).ToList();
 
-                _classes = (await _students.GetClassesAsync()).ToList();
+                _classes = (await Students.GetClassesAsync()).ToList();
                 _classes.Insert(0, new ClassDto { ClassId = 0, ClassName = "All Classes" });
                 cboClass.DisplayMember = nameof(ClassDto.ClassName);
                 cboClass.ValueMember = nameof(ClassDto.ClassId);
                 cboClass.DataSource = _classes;
 
-                _terms = (await _exams.GetActiveTermsAsync()).ToList();
+                _terms = (await Exams.GetActiveTermsAsync()).ToList();
                 cboTerm.DisplayMember = nameof(ExamTerm.TermName);
                 cboTerm.ValueMember = nameof(ExamTerm.ExamTermId);
                 cboTerm.DataSource = _terms;
@@ -87,7 +90,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnVerify_Click(object? sender, EventArgs e)
         {
-            if (_exams == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
@@ -101,7 +104,7 @@ namespace StudentManagement.Desktop.Forms
                     return;
                 }
 
-                var result = await _exams.VerifyClearanceAsync(
+                var result = await Exams.VerifyClearanceAsync(
                     studentId.Value,
                     termId.Value,
                     chkOverride.Checked,

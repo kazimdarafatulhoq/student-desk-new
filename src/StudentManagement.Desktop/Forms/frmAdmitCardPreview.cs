@@ -29,9 +29,12 @@ namespace StudentManagement.Desktop.Forms
         public frmAdmitCardPreview()
         {
             InitializeComponent();
+            
+            if (DesignTime.IsActive)
+                return;
             _cards = Array.Empty<AdmitCardDto>();
-            _institution = AppSession.InstitutionName;
-            _campus = AppSession.InstitutionCampus;
+                        _institution = AppSession.InstitutionName;
+                        _campus = AppSession.InstitutionCampus;
         }
 
         public frmAdmitCardPreview(IReadOnlyList<AdmitCardDto> cards, string? institutionName = null, string? campusAddress = null)

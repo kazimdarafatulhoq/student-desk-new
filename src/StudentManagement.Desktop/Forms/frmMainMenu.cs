@@ -19,12 +19,12 @@ namespace StudentManagement.Desktop.Forms
         public frmMainMenu()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-            {
-                UITheme.ApplyForm(this);
-                ApplyNavIcons();
-                ApplySidebarLayout(true);
-            }
+            if (DesignTime.IsActive)
+                return;
+
+            UITheme.ApplyForm(this);
+            ApplyNavIcons();
+            ApplySidebarLayout(true);
             _clockTimer = new System.Windows.Forms.Timer();
             _clockTimer.Interval = 1000;
             _clockTimer.Tick += ClockTimer_Tick;

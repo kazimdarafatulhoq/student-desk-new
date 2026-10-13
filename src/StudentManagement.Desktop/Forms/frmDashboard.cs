@@ -15,15 +15,18 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmDashboard : Form
     {
-        private readonly StudentManager _students = new StudentManager();
-        private readonly FeeManager _fees = new FeeManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
+        private FeeManager? _fees;
+        private FeeManager Fees => _fees ??= new FeeManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmDashboard()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += frmDashboard_LoadLayout;
             Load += async (s, e) => await LoadStatsAsync();
         }
@@ -68,12 +71,12 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadStatsAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
             {
-                var list = await _students.SearchAsync(new StudentSearchFilter { Status = StudentStatus.Active });
+                var list = await Students.SearchAsync(new StudentSearchFilter { Status = StudentStatus.Active });
                 int total = list.Count;
                 int clear = list.Count(s => s.NetDue <= 0);
                 int withDues = list.Count(s => s.NetDue > 0);

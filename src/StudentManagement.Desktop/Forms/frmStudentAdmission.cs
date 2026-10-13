@@ -19,7 +19,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmStudentAdmission : Form
     {
-        private readonly StudentManager _students = new StudentManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
         private string? _selectedPhotoPath;
         private int? _editStudentId;
         private string? _existingPhotoPath;
@@ -35,8 +36,9 @@ namespace StudentManagement.Desktop.Forms
         public frmStudentAdmission()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             ApplyModeChrome(editMode: false);
             dtpDateOfBirth.ValueChanged += (s, e) => UpdateAge();
             Load += async (s, e) =>
@@ -88,7 +90,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadLookupsAsync(bool loadDefaultSections = true)
         {
-            if (_students == null || _lookupsReady)
+            if (DesignTime.IsActive || _lookupsReady)
                 return;
 
             cboBloodGroup.DataSource = Enum.GetValues(typeof(BloodGroup));
@@ -99,7 +101,7 @@ namespace StudentManagement.Desktop.Forms
             IReadOnlyList<ClassDto> classes;
             try
             {
-                classes = await _students.GetClassesAsync();
+                classes = await Students.GetClassesAsync();
             }
             finally
             {
@@ -132,7 +134,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadSectionsAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
             if (!(cboClass.SelectedValue is int classId) || classId <= 0)
                 return;
@@ -140,7 +142,7 @@ namespace StudentManagement.Desktop.Forms
             await _dbGate.WaitAsync();
             try
             {
-                IReadOnlyList<SectionDto> sections = await _students.GetSectionsAsync(classId);
+                IReadOnlyList<SectionDto> sections = await Students.GetSectionsAsync(classId);
                 cboSection.DisplayMember = nameof(SectionDto.SectionName);
                 cboSection.ValueMember = nameof(SectionDto.SectionId);
                 cboSection.DataSource = sections.ToList();
@@ -153,7 +155,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadStudentForEditAsync()
         {
-            if (_students == null || !_editStudentId.HasValue)
+            if (DesignTime.IsActive || !_editStudentId.HasValue)
                 return;
 
             _suppressSectionReload++;
@@ -166,7 +168,7 @@ namespace StudentManagement.Desktop.Forms
                 StudentDto? student;
                 try
                 {
-                    student = await _students.GetByIdAsync(_editStudentId.Value);
+                    student = await Students.GetByIdAsync(_editStudentId.Value);
                 }
                 finally
                 {
@@ -323,7 +325,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnSave_Click(object? sender, EventArgs e)
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
@@ -353,7 +355,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task SaveAdmitAsync(decimal tuition)
         {
-            StudentDto result = await _students!.AdmitAsync(new StudentAdmissionRequest
+            StudentDto result = await Students.AdmitAsync(new StudentAdmissionRequest
             {
                 FullName = txtFullName.Text,
                 FatherName = txtFatherName.Text,
@@ -377,7 +379,7 @@ namespace StudentManagement.Desktop.Forms
             if (!string.IsNullOrEmpty(savedPhoto))
             {
                 result.PhotoPath = savedPhoto;
-                try { await _students.UpdateAsync(result, AppSession.Current?.Username); }
+                try { await Students.UpdateAsync(result, AppSession.Current?.Username); }
                 catch { /* offline may skip */ }
             }
 
@@ -420,7 +422,7 @@ namespace StudentManagement.Desktop.Forms
                 PhotoPath = photo
             };
 
-            await _students!.UpdateAsync(dto, AppSession.Current?.Username);
+            await Students.UpdateAsync(dto, AppSession.Current?.Username);
             MessageBox.Show(
                 "Student profile updated.\nRegistration ID: " + regNo + "\nStatus: " + dto.Status,
                 "Profile Saved",
@@ -434,7 +436,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnMarkInactive_Click(object? sender, EventArgs e)
         {
-            if (_students == null || !_editStudentId.HasValue)
+            if (DesignTime.IsActive || !_editStudentId.HasValue)
                 return;
 
             var confirm = MessageBox.Show(
@@ -448,7 +450,7 @@ namespace StudentManagement.Desktop.Forms
             try
             {
                 btnMarkInactive.Enabled = false;
-                await _students.MarkInactiveAsync(_editStudentId.Value, AppSession.Current?.Username);
+                await Students.MarkInactiveAsync(_editStudentId.Value, AppSession.Current?.Username);
                 cboStatus.SelectedItem = StudentStatus.Inactive;
                 MessageBox.Show("Student marked Inactive.", "Status Updated",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);

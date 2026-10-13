@@ -19,23 +19,25 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmAppUser : Form
     {
-        private readonly AuthManager _auth = new AuthManager();
+        private AuthManager? _auth;
+        private AuthManager Auth => _auth ??= new AuthManager();
 
         /// <summary>Parameterless constructor required by the WinForms designer.</summary>
         public frmAppUser()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += async (s, e) => await RefreshUsersAsync();
         }
 
         private async Task RefreshUsersAsync()
         {
-            if (_auth == null)
+            if (DesignTime.IsActive)
                 return;
 
-            var users = await _auth.GetUsersAsync();
+            var users = await Auth.GetUsersAsync();
             dgvUsers.Rows.Clear();
             foreach (var u in users)
             {
@@ -46,12 +48,12 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnCreate_Click(object? sender, EventArgs e)
         {
-            if (_auth == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
             {
-                await _auth.CreateUserAsync(new CreateUserRequest
+                await Auth.CreateUserAsync(new CreateUserRequest
                 {
                     Username = txtUsername.Text.Trim(),
                     FullName = txtFullName.Text.Trim(),
@@ -77,11 +79,11 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnToggle_Click(object? sender, EventArgs e)
         {
-            if (_auth == null || dgvUsers.CurrentRow is null)
+            if (DesignTime.IsActive || dgvUsers.CurrentRow is null)
                 return;
             var userId = Convert.ToInt32(dgvUsers.CurrentRow.Cells[0].Value);
             var active = dgvUsers.CurrentRow.Cells[4].Value?.ToString() == "Active";
-            await _auth.SetActiveAsync(userId, !active);
+            await Auth.SetActiveAsync(userId, !active);
             await RefreshUsersAsync();
         }
     }

@@ -15,8 +15,10 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmAdmitCardPrint : Form
     {
-        private readonly StudentManager _students = new StudentManager();
-        private readonly ExamManager _exams = new ExamManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
+        private ExamManager? _exams;
+        private ExamManager Exams => _exams ??= new ExamManager();
         private List<StudentDto> _lookup = new();
         private List<ExamTerm> _terms = new();
         private List<ClassDto> _classes = new();
@@ -26,27 +28,28 @@ namespace StudentManagement.Desktop.Forms
         public frmAdmitCardPrint()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += async (s, e) => await LoadDataAsync();
         }
 
         private async Task LoadDataAsync()
         {
-            if (_students == null || _exams == null)
+            if (DesignTime.IsActive)
                 return;
 
             _suppressStudentFilter = true;
             try
             {
-                _lookup = (await _students.GetLookupAsync()).ToList();
+                _lookup = (await Students.GetLookupAsync()).ToList();
 
-                _terms = (await _exams.GetActiveTermsAsync()).ToList();
+                _terms = (await Exams.GetActiveTermsAsync()).ToList();
                 cboTerm.DisplayMember = nameof(ExamTerm.TermName);
                 cboTerm.ValueMember = nameof(ExamTerm.ExamTermId);
                 cboTerm.DataSource = _terms;
 
-                _classes = (await _students.GetClassesAsync()).ToList();
+                _classes = (await Students.GetClassesAsync()).ToList();
                 _classes.Insert(0, new ClassDto { ClassId = 0, ClassName = "All Classes" });
                 cboClass.DisplayMember = nameof(ClassDto.ClassName);
                 cboClass.ValueMember = nameof(ClassDto.ClassId);
@@ -111,7 +114,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnIssue_Click(object? sender, EventArgs e)
         {
-            if (_exams == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
@@ -126,7 +129,7 @@ namespace StudentManagement.Desktop.Forms
                 }
 
                 btnIssue.Enabled = false;
-                var card = await _exams.IssueAdmitCardAsync(
+                var card = await Exams.IssueAdmitCardAsync(
                     studentId.Value,
                     termId.Value,
                     AppSession.Current?.UserId ?? 0,
@@ -163,7 +166,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnBatch_Click(object? sender, EventArgs e)
         {
-            if (_students == null || _exams == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
@@ -199,7 +202,7 @@ namespace StudentManagement.Desktop.Forms
                 {
                     try
                     {
-                        var card = await _exams.IssueAdmitCardAsync(
+                        var card = await Exams.IssueAdmitCardAsync(
                             s.StudentId, termId.Value, AppSession.Current?.UserId ?? 0,
                             chkOverride.Checked, txtReason.Text.Trim(), AppSession.Current?.Role);
                         issued.Add(card);

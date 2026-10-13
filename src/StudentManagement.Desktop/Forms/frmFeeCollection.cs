@@ -16,8 +16,10 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmFeeCollection : Form
     {
-        private readonly StudentManager _students = new StudentManager();
-        private readonly FeeManager _fees = new FeeManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
+        private FeeManager? _fees;
+        private FeeManager Fees => _fees ??= new FeeManager();
         private StudentDto? _student;
         private List<CheckBox> _monthChecks = new();
 
@@ -25,8 +27,9 @@ namespace StudentManagement.Desktop.Forms
         public frmFeeCollection()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             BuildMonthMatrix();
             WireOptionalFeeEvents();
         }
@@ -91,12 +94,12 @@ namespace StudentManagement.Desktop.Forms
 
         private async void btnFind_Click(object? sender, EventArgs e)
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
             {
-                _student = await _students.FindQuickAsync(txtSearch.Text);
+                _student = await Students.FindQuickAsync(txtSearch.Text);
                 if (_student is null)
                 {
                     ClearBio();
@@ -161,7 +164,7 @@ namespace StudentManagement.Desktop.Forms
                 return;
             }
 
-            if (_fees == null || _students == null)
+            if (DesignTime.IsActive)
                 return;
 
             try
@@ -173,7 +176,7 @@ namespace StudentManagement.Desktop.Forms
                 _ = decimal.TryParse(txtWaiver.Text, out var waiver);
                 var otherFees = ReadOptionalFees();
 
-                var result = await _fees.CollectAsync(new FeeCollectionRequest
+                var result = await Fees.CollectAsync(new FeeCollectionRequest
                 {
                     StudentId = _student.StudentId,
                     FeePeriods = periods,
@@ -196,7 +199,7 @@ namespace StudentManagement.Desktop.Forms
                     preview.ShowDialog(FindForm());
                 }
 
-                _student = await _students.GetByIdAsync(_student.StudentId);
+                _student = await Students.GetByIdAsync(_student.StudentId);
                 if (_student is not null)
                 {
                     lblBioDue.Text = $"Net Due: ৳ {_student.NetDue:N2}";

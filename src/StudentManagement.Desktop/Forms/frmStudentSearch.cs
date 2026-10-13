@@ -16,7 +16,8 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmStudentSearch : Form
     {
-        private readonly StudentManager _students = new StudentManager();
+        private StudentManager? _students;
+        private StudentManager Students => _students ??= new StudentManager();
         private List<StudentDto> _rows = new();
 
         public event System.Action<StudentDto>? OpenLedgerRequested;
@@ -30,8 +31,9 @@ namespace StudentManagement.Desktop.Forms
         public frmStudentSearch()
         {
             InitializeComponent();
-            if (!DesignTime.IsActive)
-                UITheme.ApplyForm(this);
+            if (DesignTime.IsActive)
+                return;
+            UITheme.ApplyForm(this);
             Load += async (s, e) =>
             {
                 await LoadLookupsAsync();
@@ -41,10 +43,10 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadLookupsAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
-            var classes = (await _students.GetClassesAsync()).ToList();
+            var classes = (await Students.GetClassesAsync()).ToList();
             classes.Insert(0, new ClassDto { ClassId = 0, ClassName = "All Classes" });
             cboClass.DisplayMember = nameof(ClassDto.ClassName);
             cboClass.ValueMember = nameof(ClassDto.ClassId);
@@ -62,12 +64,12 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task LoadSectionsAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
             var classId = cboClass.SelectedValue is int id ? id : 0;
             var sections = classId > 0
-                ? (await _students.GetSectionsAsync(classId)).ToList()
+                ? (await Students.GetSectionsAsync(classId)).ToList()
                 : new List<SectionDto>();
             sections.Insert(0, new SectionDto { SectionId = 0, SectionName = "All Sections" });
             cboSection.DisplayMember = nameof(SectionDto.SectionName);
@@ -79,7 +81,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task SearchAsync()
         {
-            if (_students == null)
+            if (DesignTime.IsActive)
                 return;
 
             StudentStatus? statusFilter = null;
@@ -95,7 +97,7 @@ namespace StudentManagement.Desktop.Forms
                 Status = statusFilter
             };
 
-            _rows = (await _students.SearchAsync(filter)).ToList();
+            _rows = (await Students.SearchAsync(filter)).ToList();
             dgvStudents.Rows.Clear();
             foreach (var row in _rows)
             {
@@ -129,7 +131,7 @@ namespace StudentManagement.Desktop.Forms
         private async void btnInactive_Click(object? sender, EventArgs e)
         {
             var s = Selected();
-            if (s is null || _students == null)
+            if (s is null || DesignTime.IsActive)
             {
                 MessageBox.Show("Select a student first.", "Mark Inactive", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -152,7 +154,7 @@ namespace StudentManagement.Desktop.Forms
 
             try
             {
-                await _students.MarkInactiveAsync(s.StudentId, AppSession.Current?.Username);
+                await Students.MarkInactiveAsync(s.StudentId, AppSession.Current?.Username);
                 await SearchAsync();
                 MessageBox.Show("Student marked Inactive.", "Status Updated",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
