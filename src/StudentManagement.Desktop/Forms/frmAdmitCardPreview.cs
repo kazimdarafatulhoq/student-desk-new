@@ -185,22 +185,23 @@ namespace StudentManagement.Desktop.Forms
             lblInst.Size = new Size(640, 56);
             instBox.Controls.Add(lblInst);
             cardPanel.Controls.Add(instBox);
-            y += 120;
 
-            // Signatures
+            // Sticky footer (signatures + admit meta) pinned to the bottom of the half-page card.
+            const int footerBlockHeight = 70;
+            int footerTop = cardPanel.Height - footerBlockHeight - 12;
+
             var sigTeacher = MakeLabel("_______________________\nClass Teacher", 9, FontStyle.Regular, Muted, true);
-            sigTeacher.Location = new Point(80, y);
+            sigTeacher.Location = new Point(80, footerTop);
             sigTeacher.Size = new Size(200, 40);
             cardPanel.Controls.Add(sigTeacher);
 
             var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 9, FontStyle.Bold, Navy, true);
-            sigPrincipal.Location = new Point(420, y);
+            sigPrincipal.Location = new Point(420, footerTop);
             sigPrincipal.Size = new Size(220, 40);
             cardPanel.Controls.Add(sigPrincipal);
-            y += 50;
 
             var footer = MakeLabel($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}", 8, FontStyle.Regular, Muted, true);
-            footer.Location = new Point(24, y);
+            footer.Location = new Point(24, footerTop + 42);
             footer.Width = 672;
             cardPanel.Controls.Add(footer);
 
@@ -244,8 +245,13 @@ namespace StudentManagement.Desktop.Forms
 
         private static string FormatClassSection(AdmitCardDto card)
         {
+            var className = (card.ClassName ?? string.Empty).Trim();
+            if (!className.StartsWith("Class ", StringComparison.OrdinalIgnoreCase)
+                && !className.Equals("Class", StringComparison.OrdinalIgnoreCase))
+                className = $"Class {className}";
+
             var section = string.IsNullOrWhiteSpace(card.SectionName) ? "" : $" - Section {card.SectionName}";
-            return $"Class {card.ClassName}{section}";
+            return $"{className}{section}";
         }
 
         private void btnClose_Click(object? sender, EventArgs e)

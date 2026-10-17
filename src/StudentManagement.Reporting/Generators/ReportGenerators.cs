@@ -335,79 +335,86 @@ namespace StudentManagement.Reporting.Generators
             IContainer container, AdmitCardDto card, string institutionName, string campus)
         {
             container.Border(1).BorderColor(Colors.Grey.Lighten1).Background(Colors.White)
-                .Padding(12).Column(cardCol =>
+                .Padding(12).Decoration(decoration =>
             {
-                cardCol.Item().AlignCenter().Text(institutionName.ToUpperInvariant())
-                    .Bold().FontSize(13).FontColor(Colors.BlueGrey.Darken4);
-                cardCol.Item().AlignCenter().Text(campus)
-                    .FontSize(8).FontColor(Colors.Grey.Darken1);
-
-                cardCol.Item().PaddingTop(6).AlignCenter().Element(e =>
+                decoration.Content().Column(cardCol =>
                 {
-                    e.Background(Colors.BlueGrey.Darken4).PaddingVertical(5).PaddingHorizontal(14)
-                        .AlignCenter()
-                        .Text((card.TermName ?? string.Empty).ToUpperInvariant() + " ADMIT CARD")
-                        .Bold().FontSize(10).FontColor(Colors.White);
-                });
+                    cardCol.Item().AlignCenter().Text(institutionName.ToUpperInvariant())
+                        .Bold().FontSize(13).FontColor(Colors.BlueGrey.Darken4);
+                    cardCol.Item().AlignCenter().Text(campus)
+                        .FontSize(8).FontColor(Colors.Grey.Darken1);
 
-                cardCol.Item().PaddingTop(6).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
+                    cardCol.Item().PaddingTop(6).AlignCenter().Element(e =>
+                    {
+                        e.Background(Colors.BlueGrey.Darken4).PaddingVertical(5).PaddingHorizontal(14)
+                            .AlignCenter()
+                            .Text((card.TermName ?? string.Empty).ToUpperInvariant() + " ADMIT CARD")
+                            .Bold().FontSize(10).FontColor(Colors.White);
+                    });
 
-                cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Row(row =>
-                {
-                    row.ConstantItem(72).Height(84).Background(Colors.White)
-                        .Border(1).BorderColor(Colors.Grey.Lighten1)
-                        .AlignCenter().AlignMiddle().Element(photo =>
+                    cardCol.Item().PaddingTop(6).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
+
+                    cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Row(row =>
+                    {
+                        row.ConstantItem(72).Height(84).Background(Colors.White)
+                            .Border(1).BorderColor(Colors.Grey.Lighten1)
+                            .AlignCenter().AlignMiddle().Element(photo =>
+                            {
+                                if (!string.IsNullOrWhiteSpace(card.PhotoPath) && File.Exists(card.PhotoPath))
+                                    photo.Image(card.PhotoPath);
+                                else
+                                    photo.AlignCenter().AlignMiddle().Text("PHOTO")
+                                        .FontSize(8).FontColor(Colors.Grey.Darken1);
+                            });
+
+                        row.RelativeItem().PaddingLeft(10).Column(info =>
                         {
-                            if (!string.IsNullOrWhiteSpace(card.PhotoPath) && File.Exists(card.PhotoPath))
-                                photo.Image(card.PhotoPath);
-                            else
-                                photo.AlignCenter().AlignMiddle().Text("PHOTO")
-                                    .FontSize(8).FontColor(Colors.Grey.Darken1);
+                            info.Spacing(2);
+                            InfoLine(info, "Student Name:", card.FullName, false);
+                            InfoLine(info, "Registration No:", card.RegistrationNo, true);
+                            InfoLine(info, "Class & Section:", FormatClassSection(card), false);
+                            InfoLine(info, "Roll No:", card.RollNumber, false);
+                            InfoLine(info, "Venue:", card.Venue, false);
                         });
+                    });
 
-                    row.RelativeItem().PaddingLeft(10).Column(info =>
+                    cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Column(inst =>
                     {
-                        info.Spacing(2);
-                        InfoLine(info, "Student Name:", card.FullName, false);
-                        InfoLine(info, "Registration No:", card.RegistrationNo, true);
-                        InfoLine(info, "Class & Section:", FormatClassSection(card), false);
-                        InfoLine(info, "Roll No:", card.RollNumber, false);
-                        InfoLine(info, "Venue:", card.Venue, false);
+                        inst.Item().Text("Instructions to Candidates:")
+                            .Bold().FontSize(9).FontColor(Colors.BlueGrey.Darken4);
+                        inst.Item().PaddingTop(2)
+                            .Text("1. Bring this Admit Card and Student ID to the examination hall.")
+                            .FontSize(7).FontColor(Colors.Grey.Darken1);
+                        inst.Item().Text("2. Mobile phones and electronic devices are strictly prohibited.")
+                            .FontSize(7).FontColor(Colors.Grey.Darken1);
+                        inst.Item().Text("3. " + card.FeeClearanceNote)
+                            .FontSize(7).FontColor(Colors.Grey.Darken1);
                     });
                 });
 
-                cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Column(inst =>
+                // Sticky footer: signatures + admit meta always sit at the bottom of the half-page card.
+                decoration.After().PaddingTop(8).Column(footer =>
                 {
-                    inst.Item().Text("Instructions to Candidates:")
-                        .Bold().FontSize(9).FontColor(Colors.BlueGrey.Darken4);
-                    inst.Item().PaddingTop(2)
-                        .Text("1. Bring this Admit Card and Student ID to the examination hall.")
-                        .FontSize(7).FontColor(Colors.Grey.Darken1);
-                    inst.Item().Text("2. Mobile phones and electronic devices are strictly prohibited.")
-                        .FontSize(7).FontColor(Colors.Grey.Darken1);
-                    inst.Item().Text("3. " + card.FeeClearanceNote)
+                    footer.Item().Row(sig =>
+                    {
+                        sig.RelativeItem().AlignCenter().Column(c =>
+                        {
+                            c.Item().Width(120).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
+                            c.Item().PaddingTop(3).Text("Class Teacher")
+                                .FontSize(8).FontColor(Colors.Grey.Darken1);
+                        });
+                        sig.RelativeItem().AlignCenter().Column(c =>
+                        {
+                            c.Item().Width(140).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
+                            c.Item().PaddingTop(3).Text("Principal & Controller")
+                                .Bold().FontSize(8).FontColor(Colors.BlueGrey.Darken4);
+                        });
+                    });
+
+                    footer.Item().PaddingTop(6).AlignCenter()
+                        .Text($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}   ·   Half A4")
                         .FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
-
-                cardCol.Item().PaddingTop(16).Row(sig =>
-                {
-                    sig.RelativeItem().AlignCenter().Column(c =>
-                    {
-                        c.Item().Width(120).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
-                        c.Item().PaddingTop(3).Text("Class Teacher")
-                            .FontSize(8).FontColor(Colors.Grey.Darken1);
-                    });
-                    sig.RelativeItem().AlignCenter().Column(c =>
-                    {
-                        c.Item().Width(140).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
-                        c.Item().PaddingTop(3).Text("Principal & Controller")
-                            .Bold().FontSize(8).FontColor(Colors.BlueGrey.Darken4);
-                    });
-                });
-
-                cardCol.Item().PaddingTop(6).AlignCenter()
-                    .Text($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}   ·   Half A4")
-                    .FontSize(7).FontColor(Colors.Grey.Darken1);
             });
         }
 
@@ -426,8 +433,13 @@ namespace StudentManagement.Reporting.Generators
 
         private static string FormatClassSection(AdmitCardDto card)
         {
+            var className = (card.ClassName ?? string.Empty).Trim();
+            if (!className.StartsWith("Class ", StringComparison.OrdinalIgnoreCase)
+                && !className.Equals("Class", StringComparison.OrdinalIgnoreCase))
+                className = $"Class {className}";
+
             var section = string.IsNullOrWhiteSpace(card.SectionName) ? "" : $" - Section {card.SectionName}";
-            return $"Class {card.ClassName}{section}";
+            return $"{className}{section}";
         }
     }
 }
