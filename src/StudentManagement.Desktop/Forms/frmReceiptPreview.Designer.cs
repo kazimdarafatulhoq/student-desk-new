@@ -1,10 +1,12 @@
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace StudentManagement.Desktop.Forms
 {
-    partial class frmReceiptPreview
+    // Base Form declared here too so Design-time / partial merge never falls back to object.
+    public partial class frmReceiptPreview : Form
     {
         private IContainer components = null;
         private Panel pnlShell;
@@ -109,7 +111,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(140, 36);
             this.btnPrint.TabIndex = 2;
-            this.btnPrint.Text = "🖨  Print Copy";
+            this.btnPrint.Text = "Print Copy";
             this.btnPrint.UseVisualStyleBackColor = false;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             //
