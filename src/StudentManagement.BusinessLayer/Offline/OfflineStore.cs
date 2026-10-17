@@ -14,6 +14,8 @@ namespace StudentManagement.BusinessLayer.Offline
         public List<StudentDto> Students { get; } = new();
         public List<ClassDto> Classes { get; } = new();
         public List<SectionDto> Sections { get; } = new();
+        public List<BloodGroupDto> BloodGroups { get; } = new();
+        public List<PaymentMethodDto> PaymentMethods { get; } = new();
         public List<LedgerEntryDto> Ledger { get; } = new();
         public List<UserAccountDto> Users { get; } = new();
         public List<ExamTerm> Terms { get; } = new();
@@ -27,17 +29,36 @@ namespace StudentManagement.BusinessLayer.Offline
         {
             Classes.AddRange(new[]
             {
-                new ClassDto { ClassId = 1, ClassName = "Class 6", ClassCode = "C6" },
-                new ClassDto { ClassId = 2, ClassName = "Class 7", ClassCode = "C7" },
-                new ClassDto { ClassId = 3, ClassName = "Class 8", ClassCode = "C8" },
-                new ClassDto { ClassId = 4, ClassName = "Class 9", ClassCode = "C9" },
-                new ClassDto { ClassId = 5, ClassName = "Class 10", ClassCode = "C10" }
+                new ClassDto { ClassId = 1, ClassName = "Class 6", ClassCode = "C6", SortOrder = 1, IsActive = true },
+                new ClassDto { ClassId = 2, ClassName = "Class 7", ClassCode = "C7", SortOrder = 2, IsActive = true },
+                new ClassDto { ClassId = 3, ClassName = "Class 8", ClassCode = "C8", SortOrder = 3, IsActive = true },
+                new ClassDto { ClassId = 4, ClassName = "Class 9", ClassCode = "C9", SortOrder = 4, IsActive = true },
+                new ClassDto { ClassId = 5, ClassName = "Class 10", ClassCode = "C10", SortOrder = 5, IsActive = true }
             });
             foreach (var c in Classes)
             {
-                Sections.Add(new SectionDto { SectionId = c.ClassId * 10 + 1, ClassId = c.ClassId, SectionName = "A" });
-                Sections.Add(new SectionDto { SectionId = c.ClassId * 10 + 2, ClassId = c.ClassId, SectionName = "B" });
+                Sections.Add(new SectionDto { SectionId = c.ClassId * 10 + 1, ClassId = c.ClassId, ClassName = c.ClassName, SectionName = "A", Capacity = 40, IsActive = true });
+                Sections.Add(new SectionDto { SectionId = c.ClassId * 10 + 2, ClassId = c.ClassId, ClassName = c.ClassName, SectionName = "B", Capacity = 40, IsActive = true });
             }
+
+            BloodGroups.AddRange(new[]
+            {
+                new BloodGroupDto { BloodGroupId = 1, Name = "A Positive", Code = "A+", SortOrder = 1 },
+                new BloodGroupDto { BloodGroupId = 2, Name = "A Negative", Code = "A-", SortOrder = 2 },
+                new BloodGroupDto { BloodGroupId = 3, Name = "B Positive", Code = "B+", SortOrder = 3 },
+                new BloodGroupDto { BloodGroupId = 4, Name = "B Negative", Code = "B-", SortOrder = 4 },
+                new BloodGroupDto { BloodGroupId = 5, Name = "AB Positive", Code = "AB+", SortOrder = 5 },
+                new BloodGroupDto { BloodGroupId = 6, Name = "AB Negative", Code = "AB-", SortOrder = 6 },
+                new BloodGroupDto { BloodGroupId = 7, Name = "O Positive", Code = "O+", SortOrder = 7 },
+                new BloodGroupDto { BloodGroupId = 8, Name = "O Negative", Code = "O-", SortOrder = 8 }
+            });
+            PaymentMethods.AddRange(new[]
+            {
+                new PaymentMethodDto { PaymentMethodId = 1, Name = "Cash", SortOrder = 1 },
+                new PaymentMethodDto { PaymentMethodId = 2, Name = "bKash", SortOrder = 2 },
+                new PaymentMethodDto { PaymentMethodId = 3, Name = "Nagad", SortOrder = 3 },
+                new PaymentMethodDto { PaymentMethodId = 4, Name = "Bank Transfer", SortOrder = 4 }
+            });
 
             Students.Add(new StudentDto
             {

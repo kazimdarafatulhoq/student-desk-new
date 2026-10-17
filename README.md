@@ -9,7 +9,7 @@ Architecture matches a classic **DyeERP-style** layout (Form → Manager → tbl
 | Project | Like DyeERP | Responsibility |
 |---------|-------------|----------------|
 | `StudentManagement.Desktop` | `DyeERP.Bangladesh` | WinForms UI (`frm…`) |
-| `StudentManagement.BusinessLayer` | `DyeERP.BusinessLayer` | `StudentManager`, `FeeManager`, `AuthManager`, `ExamManager` |
+| `StudentManagement.BusinessLayer` | `DyeERP.BusinessLayer` | `StudentManager`, `FeeManager`, `AcademicManager`, `AuthManager`, `ExamManager` |
 | `StudentManagement.DataAccessLayer` | `DyeERP.DataAccessLayer` | `Execute`, `tblStudent`, `tblFee`, `tblUser`, `tblExam`, `tblAcademic` |
 | `StudentManagement.UserObjects` | `DyeERP.UserObjects` | POCOs / DTOs + enums |
 | `StudentManagement.Reporting` | (reports) | QuestPDF receipts / admit cards / ledger CSV |
@@ -41,10 +41,15 @@ No DI container. Forms create managers with `new`.
 1. Run [`database/CreateDatabaseAndGrantAccess.sql`](database/CreateDatabaseAndGrantAccess.sql)
 2. Run [`database/StudentManagementSDB.sql`](database/StudentManagementSDB.sql)
 3. Run [`database/StoredProcedures_StudentSave.sql`](database/StoredProcedures_StudentSave.sql)
-4. Set connection string in `src/StudentManagement.Desktop/App.config`
-5. Set `OfflineMode` to `false` when SQL Server is available
+4. Run [`database/StoredProcedures_AcademicSave.sql`](database/StoredProcedures_AcademicSave.sql)
+5. Set connection string in `src/StudentManagement.Desktop/App.config`
+6. Set `OfflineMode` to `false` when SQL Server is available
 
-Saves go through stored procedures: `usp_AdmitStudent`, `usp_UpdateStudent`, `usp_SetStudentStatus`, `usp_PostTuitionInvoice`, `usp_RecordFeePayment`.
+**Existing database upgrade:** run [`database/Alter_Lookups_And_AcademicSave.sql`](database/Alter_Lookups_And_AcademicSave.sql) then `StoredProcedures_AcademicSave.sql` to add `BloodGroups` / `PaymentMethods` and Class/Section save SPs.
+
+Saves go through stored procedures: `usp_AdmitStudent`, `usp_UpdateStudent`, `usp_SetStudentStatus`, `usp_PostTuitionInvoice`, `usp_RecordFeePayment`, `usp_SaveClass`, `usp_SaveSection`.
+
+Dropdown sources: `usp_GetBloodGroups`, `usp_GetPaymentMethods`.
 
 ```
 Data Source=NGBC-IT-168;Initial Catalog=StudentManagementSDB;User Id=sa;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;
@@ -79,4 +84,6 @@ Or open `StudentManagement.sln` and set **StudentManagement.Desktop** as startup
 - Student Ledger  
 - Exam Clearance Verification  
 - Admit Card single / bulk print  
+- System → Class Setup / Section Setup (add & edit via SP)  
 - User Access & Security  
+

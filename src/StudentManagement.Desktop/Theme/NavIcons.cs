@@ -106,6 +106,27 @@ namespace StudentManagement.Desktop.Theme
             }
         });
 
+        public static Image ClassSetup(Color color) => Draw(color, g =>
+        {
+            using (Pen p = Pen(color, 1.6f))
+            {
+                g.DrawRectangle(p, 3, 4, 14, 12);
+                g.DrawLine(p, 3, 8, 17, 8);
+                g.DrawLine(p, 10, 8, 10, 16);
+            }
+        });
+
+        public static Image SectionSetup(Color color) => Draw(color, g =>
+        {
+            using (Pen p = Pen(color, 1.6f))
+            {
+                g.DrawRectangle(p, 2, 4, 7, 12);
+                g.DrawRectangle(p, 11, 4, 7, 12);
+                g.DrawLine(p, 4, 8, 7, 8);
+                g.DrawLine(p, 13, 8, 16, 8);
+            }
+        });
+
         public static Image Logout(Color color) => Draw(color, g =>
         {
             using (Pen p = Pen(color, 1.8f))

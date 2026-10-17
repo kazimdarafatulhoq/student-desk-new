@@ -81,13 +81,35 @@ namespace StudentManagement.UserObjects.Objects
         public int ClassId { get; set; }
         public string ClassName { get; set; } = string.Empty;
         public string? ClassCode { get; set; }
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 
     public class SectionDto
     {
         public int SectionId { get; set; }
         public int ClassId { get; set; }
+        public string ClassName { get; set; } = string.Empty;
         public string SectionName { get; set; } = string.Empty;
+        public int Capacity { get; set; } = 40;
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class BloodGroupDto
+    {
+        public int BloodGroupId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class PaymentMethodDto
+    {
+        public int PaymentMethodId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 
     public class LedgerSummaryDto

@@ -161,6 +161,8 @@ namespace StudentManagement.BusinessLayer
                 "Ledger" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.AdmissionOfficer,
                 "ExamClearanceDto" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.Teacher,
                 "AdmitCard" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.Teacher,
+                "ClassSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
+                "SectionSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
                 "Users" => role is UserRole.SuperAdmin,
                 _ => role == UserRole.SuperAdmin
             };

@@ -136,6 +136,20 @@
       <DependentUpon>frmAppUser.cs</DependentUpon>
     </EmbeddedResource>
 
+    <Compile Update="Forms\frmClass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmClass.Designer.cs">
+      <DependentUpon>frmClass.cs</DependentUpon>
+    </Compile>
+
+    <Compile Update="Forms\frmSection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmSection.Designer.cs">
+      <DependentUpon>frmSection.cs</DependentUpon>
+    </Compile>
+
     <Compile Update="Forms\frmReceiptPreview.cs">
       <SubType>Form</SubType>
     </Compile>

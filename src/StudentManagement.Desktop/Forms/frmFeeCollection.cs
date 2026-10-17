@@ -37,15 +37,19 @@ namespace StudentManagement.Desktop.Forms
 
         private void BindPaymentMethods()
         {
-            var methods = Enum.GetValues(typeof(PaymentMethod))
-                .Cast<PaymentMethod>()
-                .Select(m => new KeyValuePair<PaymentMethod, string>(m, EnumDisplay.PaymentMethodLabel(m)))
-                .ToList();
-            cboPaymentMethod.DisplayMember = "Value";
-            cboPaymentMethod.ValueMember = "Key";
+            var methods = new AcademicManager().GetPaymentMethods();
+            cboPaymentMethod.DisplayMember = nameof(PaymentMethodDto.Name);
+            cboPaymentMethod.ValueMember = nameof(PaymentMethodDto.PaymentMethodId);
             cboPaymentMethod.DataSource = methods;
             if (cboPaymentMethod.Items.Count > 0)
                 cboPaymentMethod.SelectedIndex = 0;
+        }
+
+        private PaymentMethod ReadSelectedPaymentMethod()
+        {
+            if (cboPaymentMethod.SelectedValue != null)
+                return (PaymentMethod)Convert.ToInt32(cboPaymentMethod.SelectedValue);
+            return PaymentMethod.Cash;
         }
 
         private void WireOptionalFeeEvents()
@@ -242,9 +246,7 @@ namespace StudentManagement.Desktop.Forms
                     FineAmount = fine,
                     WaiverAmount = waiver,
                     OtherFees = otherFees,
-                    PaymentMethod = cboPaymentMethod.SelectedValue is PaymentMethod pm
-                        ? pm
-                        : PaymentMethod.Cash,
+                    PaymentMethod = ReadSelectedPaymentMethod(),
                     TransactionRef = txtTxnRef.Text.Trim(),
                     Remarks = txtRemarks.Text.Trim(),
                     CollectedByUserId = AppSession.Current?.UserId ?? 0

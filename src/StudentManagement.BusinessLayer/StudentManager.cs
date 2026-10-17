@@ -224,21 +224,27 @@ namespace StudentManagement.BusinessLayer
             {
                 ClassId = r.Field<int>("ClassId"),
                 ClassName = r.Field<string>("ClassName") ?? string.Empty,
-                ClassCode = r.Table.Columns.Contains("ClassCode") ? r.Field<string?>("ClassCode") : null
+                ClassCode = r.Table.Columns.Contains("ClassCode") ? r.Field<string?>("ClassCode") : null,
+                SortOrder = r.Table.Columns.Contains("SortOrder") && r["SortOrder"] != System.DBNull.Value
+                    ? Convert.ToInt32(r["SortOrder"]) : 0,
+                IsActive = true
             }).ToList();
         }
 
         public List<SectionDto> GetSections(int classId)
         {
             if (DbConfig.OfflineMode)
-                return OfflineStore.Instance.Sections.Where(s => s.ClassId == classId).ToList();
+                return OfflineStore.Instance.Sections.Where(s => s.ClassId == classId && s.IsActive).ToList();
 
             var dt = new tblAcademic().GetSectionsByClass(classId);
             return dt.AsEnumerable().Select(r => new SectionDto
             {
                 SectionId = r.Field<int>("SectionId"),
                 ClassId = r.Field<int>("ClassId"),
-                SectionName = r.Field<string>("SectionName") ?? string.Empty
+                SectionName = r.Field<string>("SectionName") ?? string.Empty,
+                Capacity = r.Table.Columns.Contains("Capacity") && r["Capacity"] != System.DBNull.Value
+                    ? Convert.ToInt32(r["Capacity"]) : 40,
+                IsActive = true
             }).ToList();
         }
 

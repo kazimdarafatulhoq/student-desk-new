@@ -21,6 +21,8 @@ namespace StudentManagement.Desktop.Forms
     {
         private StudentManager? _students;
         private StudentManager Students => _students ??= new StudentManager();
+        private AcademicManager? _academic;
+        private AcademicManager Academic => _academic ??= new AcademicManager();
         private string? _selectedPhotoPath;
         private int? _editStudentId;
         private string? _existingPhotoPath;
@@ -99,20 +101,25 @@ namespace StudentManagement.Desktop.Forms
             if (DesignTime.IsActive || _lookupsReady)
                 return;
 
-            cboBloodGroup.DataSource = Enum.GetValues(typeof(BloodGroup));
             cboGender.DataSource = Enum.GetValues(typeof(Gender));
             cboStatus.DataSource = Enum.GetValues(typeof(StudentStatus));
 
             await _dbGate.WaitAsync();
             IReadOnlyList<ClassDto> classes;
+            IReadOnlyList<BloodGroupDto> bloodGroups;
             try
             {
+                bloodGroups = await Academic.GetBloodGroupsAsync();
                 classes = await Students.GetClassesAsync();
             }
             finally
             {
                 _dbGate.Release();
             }
+
+            cboBloodGroup.DisplayMember = nameof(BloodGroupDto.Code);
+            cboBloodGroup.ValueMember = nameof(BloodGroupDto.BloodGroupId);
+            cboBloodGroup.DataSource = bloodGroups.ToList();
 
             cboClass.DisplayMember = nameof(ClassDto.ClassName);
             cboClass.ValueMember = nameof(ClassDto.ClassId);
@@ -192,7 +199,7 @@ namespace StudentManagement.Desktop.Forms
                 txtFullName.Text = student.FullName;
                 txtFatherName.Text = student.FatherName;
                 txtMotherName.Text = student.MotherName;
-                cboBloodGroup.SelectedItem = student.BloodGroup;
+                cboBloodGroup.SelectedValue = (int)student.BloodGroup;
                 cboGender.SelectedItem = student.Gender;
                 dtpDateOfBirth.Value = student.DateOfBirth < dtpDateOfBirth.MinDate
                     ? DateTime.Today.AddYears(-12)
@@ -437,6 +444,13 @@ namespace StudentManagement.Desktop.Forms
             }
         }
 
+        private BloodGroup ReadSelectedBloodGroup()
+        {
+            if (cboBloodGroup.SelectedValue != null)
+                return (BloodGroup)Convert.ToInt32(cboBloodGroup.SelectedValue);
+            return BloodGroup.OPositive;
+        }
+
         private async Task SaveAdmitAsync(decimal tuition)
         {
             decimal transportFee = ReadTransportFee();
@@ -445,7 +459,7 @@ namespace StudentManagement.Desktop.Forms
                 FullName = txtFullName.Text,
                 FatherName = txtFatherName.Text,
                 MotherName = txtMotherName.Text,
-                BloodGroup = (BloodGroup)cboBloodGroup.SelectedItem!,
+                BloodGroup = ReadSelectedBloodGroup(),
                 Gender = (Gender)cboGender.SelectedItem!,
                 DateOfBirth = dtpDateOfBirth.Value.Date,
                 GuardianPhone = txtGuardianPhone.Text,
@@ -504,7 +518,7 @@ namespace StudentManagement.Desktop.Forms
                 FullName = txtFullName.Text,
                 FatherName = txtFatherName.Text,
                 MotherName = txtMotherName.Text,
-                BloodGroup = (BloodGroup)cboBloodGroup.SelectedItem!,
+                BloodGroup = ReadSelectedBloodGroup(),
                 Gender = (Gender)cboGender.SelectedItem!,
                 DateOfBirth = dtpDateOfBirth.Value.Date,
                 GuardianPhone = txtGuardianPhone.Text,

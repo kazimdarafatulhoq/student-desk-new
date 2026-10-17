@@ -313,7 +313,22 @@ namespace StudentManagement.BusinessLayer
             return lines;
         }
 
-        public static string FormatPaymentMethod(PaymentMethod method) => EnumDisplay.PaymentMethodLabel(method);
+        public static string FormatPaymentMethod(PaymentMethod method)
+        {
+            try
+            {
+                var match = new AcademicManager().GetPaymentMethods()
+                    .FirstOrDefault(p => p.PaymentMethodId == (int)method);
+                if (match != null && !string.IsNullOrWhiteSpace(match.Name))
+                    return match.Name;
+            }
+            catch
+            {
+                // Fall back to enum label if lookup table is unavailable.
+            }
+
+            return EnumDisplay.PaymentMethodLabel(method);
+        }
 
         public static string FormatFeePeriod(string period)
         {

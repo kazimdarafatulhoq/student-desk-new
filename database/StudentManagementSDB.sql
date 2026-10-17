@@ -122,6 +122,37 @@ CREATE TABLE dbo.Users
 );
 GO
 
+CREATE TABLE dbo.BloodGroups
+(
+    BloodGroupId INT NOT NULL CONSTRAINT PK_BloodGroups PRIMARY KEY,
+    Name         NVARCHAR(50)  NOT NULL,
+    Code         NVARCHAR(10)  NOT NULL,
+    SortOrder    INT NOT NULL CONSTRAINT DF_BloodGroups_SortOrder DEFAULT (0),
+    IsActive     BIT NOT NULL CONSTRAINT DF_BloodGroups_IsActive DEFAULT (1),
+    CreatedAt    DATETIME2 NOT NULL CONSTRAINT DF_BloodGroups_CreatedAt DEFAULT (SYSUTCDATETIME()),
+    CreatedBy    NVARCHAR(100) NULL,
+    UpdatedAt    DATETIME2 NULL,
+    UpdatedBy    NVARCHAR(100) NULL,
+    IsDeleted    BIT NOT NULL CONSTRAINT DF_BloodGroups_IsDeleted DEFAULT (0),
+    CONSTRAINT UQ_BloodGroups_Code UNIQUE (Code)
+);
+GO
+
+CREATE TABLE dbo.PaymentMethods
+(
+    PaymentMethodId INT NOT NULL CONSTRAINT PK_PaymentMethods PRIMARY KEY,
+    Name            NVARCHAR(50) NOT NULL,
+    SortOrder       INT NOT NULL CONSTRAINT DF_PaymentMethods_SortOrder DEFAULT (0),
+    IsActive        BIT NOT NULL CONSTRAINT DF_PaymentMethods_IsActive DEFAULT (1),
+    CreatedAt       DATETIME2 NOT NULL CONSTRAINT DF_PaymentMethods_CreatedAt DEFAULT (SYSUTCDATETIME()),
+    CreatedBy       NVARCHAR(100) NULL,
+    UpdatedAt       DATETIME2 NULL,
+    UpdatedBy       NVARCHAR(100) NULL,
+    IsDeleted       BIT NOT NULL CONSTRAINT DF_PaymentMethods_IsDeleted DEFAULT (0),
+    CONSTRAINT UQ_PaymentMethods_Name UNIQUE (Name)
+);
+GO
+
 CREATE TABLE dbo.Classes
 (
     ClassId     INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Classes PRIMARY KEY,
@@ -191,7 +222,8 @@ CREATE TABLE dbo.Students
     CONSTRAINT CK_Students_BloodGroup CHECK (BloodGroup BETWEEN 1 AND 8),
     CONSTRAINT CK_Students_Status CHECK (Status BETWEEN 1 AND 5),
     CONSTRAINT CK_Students_Fee CHECK (MonthlyTuitionFee >= 0),
-    CONSTRAINT CK_Students_TransportFee CHECK (MonthlyTransportFee >= 0)
+    CONSTRAINT CK_Students_TransportFee CHECK (MonthlyTransportFee >= 0),
+    CONSTRAINT FK_Students_BloodGroups FOREIGN KEY (BloodGroup) REFERENCES dbo.BloodGroups(BloodGroupId)
 );
 GO
 
@@ -995,6 +1027,24 @@ VALUES
 (N'teacher', N'Class Teacher',
  N'SHA256$PLACEHOLDER$REPLACE_ON_BOOTSTRAP',
  N'teacher@school.edu', 4, 1, N'seed');
+GO
+
+INSERT INTO dbo.BloodGroups (BloodGroupId, Name, Code, SortOrder, CreatedBy) VALUES
+(1, N'A Positive',  N'A+',  1, N'seed'),
+(2, N'A Negative',  N'A-',  2, N'seed'),
+(3, N'B Positive',  N'B+',  3, N'seed'),
+(4, N'B Negative',  N'B-',  4, N'seed'),
+(5, N'AB Positive', N'AB+', 5, N'seed'),
+(6, N'AB Negative', N'AB-', 6, N'seed'),
+(7, N'O Positive',  N'O+',  7, N'seed'),
+(8, N'O Negative',  N'O-',  8, N'seed');
+GO
+
+INSERT INTO dbo.PaymentMethods (PaymentMethodId, Name, SortOrder, CreatedBy) VALUES
+(1, N'Cash', 1, N'seed'),
+(2, N'bKash', 2, N'seed'),
+(3, N'Nagad', 3, N'seed'),
+(4, N'Bank Transfer', 4, N'seed');
 GO
 
 INSERT INTO dbo.Classes (ClassName, ClassCode, SortOrder, CreatedBy) VALUES

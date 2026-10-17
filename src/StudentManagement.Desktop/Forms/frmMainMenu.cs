@@ -105,6 +105,8 @@ namespace StudentManagement.Desktop.Forms
             btnLedger.Visible = AuthManager.CanAccess(role, "Ledger");
             btnExamClearance.Visible = AuthManager.CanAccess(role, "ExamClearance");
             btnAdmitCard.Visible = AuthManager.CanAccess(role, "AdmitCard");
+            btnClass.Visible = AuthManager.CanAccess(role, "ClassSetup");
+            btnSection.Visible = AuthManager.CanAccess(role, "SectionSetup");
             btnUsers.Visible = AuthManager.CanAccess(role, "Users");
         }
 
@@ -206,6 +208,8 @@ namespace StudentManagement.Desktop.Forms
             else if (formName == nameof(frmStudentLedger)) active = btnLedger;
             else if (formName == nameof(frmExamClearance)) active = btnExamClearance;
             else if (formName == nameof(frmAdmitCardPrint)) active = btnAdmitCard;
+            else if (formName == nameof(frmClass)) active = btnClass;
+            else if (formName == nameof(frmSection)) active = btnSection;
             else if (formName == nameof(frmAppUser)) active = btnUsers;
 
             if (active != null)
@@ -224,6 +228,8 @@ namespace StudentManagement.Desktop.Forms
             RecolorNav(btnLedger, IsActive(btnLedger) ? Color.White : UITheme.TextMuted);
             RecolorNav(btnExamClearance, IsActive(btnExamClearance) ? Color.White : UITheme.TextMuted);
             RecolorNav(btnAdmitCard, IsActive(btnAdmitCard) ? Color.White : UITheme.TextMuted);
+            RecolorNav(btnClass, IsActive(btnClass) ? Color.White : UITheme.TextMuted);
+            RecolorNav(btnSection, IsActive(btnSection) ? Color.White : UITheme.TextMuted);
             RecolorNav(btnUsers, IsActive(btnUsers) ? Color.White : UITheme.TextMuted);
             RecolorNav(btnLogout, Color.White);
         }
@@ -244,6 +250,8 @@ namespace StudentManagement.Desktop.Forms
             else if (button == btnLedger) icon = NavIcons.Ledger(color);
             else if (button == btnExamClearance) icon = NavIcons.Exam(color);
             else if (button == btnAdmitCard) icon = NavIcons.AdmitCard(color);
+            else if (button == btnClass) icon = NavIcons.ClassSetup(color);
+            else if (button == btnSection) icon = NavIcons.SectionSetup(color);
             else if (button == btnUsers) icon = NavIcons.Users(color);
             else if (button == btnLogout) icon = NavIcons.Logout(color);
             else return;
@@ -280,6 +288,8 @@ namespace StudentManagement.Desktop.Forms
             AssignNav(btnLedger, NavIcons.Ledger(mute), "Student Ledger");
             AssignNav(btnExamClearance, NavIcons.Exam(mute), "Exam Fee Eligibility");
             AssignNav(btnAdmitCard, NavIcons.AdmitCard(mute), "Admit Card Printing");
+            AssignNav(btnClass, NavIcons.ClassSetup(mute), "Class Setup");
+            AssignNav(btnSection, NavIcons.SectionSetup(mute), "Section Setup");
             AssignNav(btnUsers, NavIcons.Users(mute), "User Access & Security");
 
             btnLogout.Tag = "nav-danger";
@@ -407,6 +417,8 @@ namespace StudentManagement.Desktop.Forms
         private void btnLedger_Click(object? sender, EventArgs e) { OpenChild<frmStudentLedger>(); }
         private void btnExamClearance_Click(object? sender, EventArgs e) { OpenChild<frmExamClearance>(); }
         private void btnAdmitCard_Click(object? sender, EventArgs e) { OpenChild<frmAdmitCardPrint>(); }
+        private void btnClass_Click(object? sender, EventArgs e) { OpenChild<frmClass>(); }
+        private void btnSection_Click(object? sender, EventArgs e) { OpenChild<frmSection>(); }
         private void btnUsers_Click(object? sender, EventArgs e) { OpenChild<frmAppUser>(); }
 
         public void OpenFeeCollectionFromDashboard()
