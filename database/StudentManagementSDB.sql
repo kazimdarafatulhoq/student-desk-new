@@ -1011,11 +1011,12 @@ BEGIN
             (@StudentId, SYSUTCDATETIME(), N'WVR-' + @ReceiptNo, N'Waiver / Discount', @FeePeriods, 0, @WaiverApplied, 4, 4, @CollectedByUserId, N'sp');
     END
 
+    /* PaymentDate must be local GETDATE() so dashboard "today" (CAST(GETDATE() AS DATE)) matches. */
     INSERT INTO dbo.FeePayments
         (StudentId, ReceiptNo, PaymentDate, AmountPaid, FineCollected, WaiverApplied, PaymentMethod,
          TransactionRef, FeePeriods, Remarks, LedgerId, CollectedByUserId, CreatedBy)
     VALUES
-        (@StudentId, @ReceiptNo, SYSUTCDATETIME(), @AmountPaid, ISNULL(@FineCollected, 0), ISNULL(@WaiverApplied, 0),
+        (@StudentId, @ReceiptNo, GETDATE(), @AmountPaid, ISNULL(@FineCollected, 0), ISNULL(@WaiverApplied, 0),
          @PaymentMethod, @TransactionRef, @FeePeriods, @Remarks, @LedgerId, @CollectedByUserId, N'sp');
 
     COMMIT TRAN;

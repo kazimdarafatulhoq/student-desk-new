@@ -97,6 +97,20 @@ namespace StudentManagement.BusinessLayer
                     });
                 }
 
+                store.Payments.Add(new FeeCollectionResult
+                {
+                    CollectionId = collectionId,
+                    ReceiptNo = receiptNo,
+                    AmountPaid = netPayable,
+                    PaymentDate = DateTime.Now,
+                    StudentName = student.FullName,
+                    RegistrationNo = student.RegistrationNo,
+                    FeePeriods = periods,
+                    PaymentMethod = request.PaymentMethod,
+                    PaymentMethodDisplay = FormatPaymentMethod(request.PaymentMethod),
+                    LineItems = BuildReceiptLines(request, otherFees)
+                });
+
                 student.NetDue = Math.Max(0, student.NetDue - netPayable - request.WaiverAmount);
             }
             else

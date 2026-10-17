@@ -47,6 +47,8 @@ No DI container. Forms create managers with `new`.
 
 **Existing database upgrade:** run [`database/Alter_Lookups_And_AcademicSave.sql`](database/Alter_Lookups_And_AcademicSave.sql) then `StoredProcedures_AcademicSave.sql` to add `BloodGroups` / `PaymentMethods` / `UserRoles` and Class/Section save SPs.
 
+If **Today's Collection** on the dashboard misses a just-printed receipt, run [`database/Alter_Fix_FeePayment_LocalDate.sql`](database/Alter_Fix_FeePayment_LocalDate.sql) (PaymentDate must be local `GETDATE()`, not UTC).
+
 Saves go through stored procedures: `usp_AdmitStudent`, `usp_UpdateStudent`, `usp_SetStudentStatus`, `usp_PostTuitionInvoice`, `usp_RecordFeePayment`, `usp_SaveClass`, `usp_SaveSection`.
 
 Dropdown sources: `usp_GetBloodGroups`, `usp_GetPaymentMethods`, `usp_GetUserRoles`.
