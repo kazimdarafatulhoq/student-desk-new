@@ -333,6 +333,54 @@ namespace StudentManagement.BusinessLayer
             return months;
         }
 
+        /// <summary>
+        /// Transport bills from the calendar month AFTER activation (not the activation month).
+        /// </summary>
+        public static bool TryParseFeePeriod(string period, out DateTime monthStart)
+        {
+            monthStart = default;
+            if (string.IsNullOrWhiteSpace(period))
+                return false;
+            return DateTime.TryParseExact(
+                period.Trim(),
+                "MMM-yyyy",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out monthStart);
+        }
+
+        public static DateTime FirstTransportBillMonth(DateTime activatedOn)
+            => new DateTime(activatedOn.Year, activatedOn.Month, 1).AddMonths(1);
+
+        public static int CountBillableTransportMonths(
+            IEnumerable<string> feePeriods,
+            bool transportActive,
+            DateTime? transportActivatedOn)
+        {
+            if (!transportActive || !transportActivatedOn.HasValue)
+                return 0;
+
+            var firstBillable = FirstTransportBillMonth(transportActivatedOn.Value);
+            var count = 0;
+            foreach (var period in feePeriods)
+            {
+                if (TryParseFeePeriod(period, out var monthStart) && monthStart >= firstBillable)
+                    count++;
+            }
+            return count;
+        }
+
+        public static decimal CalculateAutoTransportFee(
+            StudentDto student,
+            IEnumerable<string> feePeriods)
+        {
+            if (student == null || !student.TransportActive || student.MonthlyTransportFee <= 0)
+                return 0;
+            var months = CountBillableTransportMonths(
+                feePeriods, student.TransportActive, student.TransportActivatedOn);
+            return student.MonthlyTransportFee * months;
+        }
+
         public System.Threading.Tasks.Task<FeeCollectionResult> CollectAsync(FeeCollectionRequest request, System.Threading.CancellationToken ct = default)
             => System.Threading.Tasks.Task.FromResult(Collect(request));
         public System.Threading.Tasks.Task<LedgerSummaryDto> GetSummaryAsync(int studentId, System.Threading.CancellationToken ct = default)

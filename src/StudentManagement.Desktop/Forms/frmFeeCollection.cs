@@ -125,6 +125,7 @@ namespace StudentManagement.Desktop.Forms
                 lblBioDue.ForeColor = _student.NetDue > 0 ? UITheme.Danger : UITheme.Success;
                 lblBioPhone.Text = _student.GuardianPhone;
                 txtTuitionUnit.Text = _student.MonthlyTuitionFee.ToString("0.##");
+                ApplyAutoTransportFee();
                 Recalc();
             }
             catch (Exception ex)
@@ -141,6 +142,28 @@ namespace StudentManagement.Desktop.Forms
             lblBioClass.Text = "—";
             lblBioDue.Text = "—";
             lblBioPhone.Text = "—";
+            txtTransportFee.ReadOnly = false;
+            txtTransportFee.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// When transport is Active, auto-fill Monthly Transport Fee for selected months
+        /// that fall after the activation month (billing starts next month).
+        /// </summary>
+        private void ApplyAutoTransportFee()
+        {
+            if (_student is null || !_student.TransportActive || _student.MonthlyTransportFee <= 0)
+            {
+                txtTransportFee.ReadOnly = false;
+                return;
+            }
+
+            var periods = _monthChecks.Where(c => c.Checked).Select(c => c.Text);
+            var auto = FeeManager.CalculateAutoTransportFee(_student, periods);
+            var text = auto > 0 ? auto.ToString("0.##") : "0";
+            if (!string.Equals(txtTransportFee.Text, text, StringComparison.Ordinal))
+                txtTransportFee.Text = text;
+            txtTransportFee.ReadOnly = true;
         }
 
         private void Recalc()
@@ -152,6 +175,8 @@ namespace StudentManagement.Desktop.Forms
                 return;
             }
 
+            ApplyAutoTransportFee();
+
             var months = _monthChecks.Count(c => c.Checked);
             _ = decimal.TryParse(txtTuitionUnit.Text, out var unit);
             _ = decimal.TryParse(txtFine.Text, out var fine);
@@ -160,9 +185,20 @@ namespace StudentManagement.Desktop.Forms
             var otherTotal = otherFees.Sum(f => f.Amount);
             var tuition = unit * months;
             var net = FeeManager.CalculateNetPayable(tuition, fine, waiver, otherTotal);
+
+            var transportMonths = FeeManager.CountBillableTransportMonths(
+                _monthChecks.Where(c => c.Checked).Select(c => c.Text),
+                _student.TransportActive,
+                _student.TransportActivatedOn);
+            var transportNote = _student.TransportActive && transportMonths > 0
+                ? $"  ·  Transport ×{transportMonths}: ৳ {_student.MonthlyTransportFee * transportMonths:N2}"
+                : (_student.TransportActive
+                    ? "  ·  Transport: starts next month after activation"
+                    : string.Empty);
+
             lblTuitionTotal.Text = otherTotal > 0
-                ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}"
-                : $"Tuition: ৳ {tuition:N2}";
+                ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}{transportNote}"
+                : $"Tuition: ৳ {tuition:N2}{transportNote}";
             lblNetPayable.Text = $"৳ {net:N2}";
             lblNetPayable.ForeColor = net > 0 ? UITheme.Success : UITheme.TextMuted;
         }

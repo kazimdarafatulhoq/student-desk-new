@@ -111,6 +111,10 @@ namespace StudentManagement.BusinessLayer
                     Status = StudentStatus.Active,
                     AcademicSession = request.AcademicSession,
                     PhotoPath = request.PhotoPath,
+                    WantTransport = request.WantTransport,
+                    TransportActive = false,
+                    MonthlyTransportFee = request.MonthlyTransportFee < 0 ? 0 : request.MonthlyTransportFee,
+                    TransportActivatedOn = null,
                     NetDue = request.MonthlyTuitionFee,
                     AgeDisplay = AgeCalculator.Format(request.DateOfBirth.Date)
                 };
@@ -144,6 +148,7 @@ namespace StudentManagement.BusinessLayer
             if (student.ClassId <= 0 || student.SectionId <= 0) throw new ArgumentException("Class and section are required.");
             if (string.IsNullOrWhiteSpace(student.RollNumber)) throw new ArgumentException("Roll number is required.");
             if (student.MonthlyTuitionFee < 0) throw new ArgumentException("Tuition fee cannot be negative.");
+            ValidateTransport(student.WantTransport, student.TransportActive, student.MonthlyTransportFee);
 
             if (DbConfig.OfflineMode)
             {
@@ -166,6 +171,20 @@ namespace StudentManagement.BusinessLayer
                 existing.MonthlyTuitionFee = student.MonthlyTuitionFee;
                 existing.Status = student.Status;
                 existing.PhotoPath = student.PhotoPath;
+                existing.WantTransport = student.WantTransport || student.TransportActive;
+                existing.MonthlyTransportFee = student.MonthlyTransportFee < 0 ? 0 : student.MonthlyTransportFee;
+                if (student.TransportActive)
+                {
+                    existing.TransportActivatedOn = student.TransportActivatedOn
+                        ?? existing.TransportActivatedOn
+                        ?? DateTime.Today;
+                    existing.TransportActive = true;
+                }
+                else
+                {
+                    existing.TransportActive = false;
+                    existing.TransportActivatedOn = null;
+                }
                 if (!string.IsNullOrWhiteSpace(student.AcademicSession))
                     existing.AcademicSession = student.AcademicSession;
                 return;
@@ -234,6 +253,17 @@ namespace StudentManagement.BusinessLayer
             if (request.DateOfBirth.Date >= DateTime.Today) throw new ArgumentException("Date of birth must be in the past.");
             if (string.IsNullOrWhiteSpace(request.PhotoPath))
                 throw new ArgumentException("Student photo is required. Please upload a photo before completing admission.");
+            if (request.MonthlyTransportFee < 0)
+                throw new ArgumentException("Transport fee cannot be negative.");
+        }
+
+        private static void ValidateTransport(bool want, bool active, decimal fee)
+        {
+            if (fee < 0) throw new ArgumentException("Transport fee cannot be negative.");
+            if (active && fee <= 0)
+                throw new ArgumentException("Set Monthly Transport Fee before activating Gari service.");
+            if (active && !want)
+                throw new ArgumentException("Transport Active requires Want Transport to be set.");
         }
 
         private static List<StudentDto> MapStudents(DataTable dt)
@@ -276,7 +306,15 @@ namespace StudentManagement.BusinessLayer
                     ? Convert.ToString(r["AcademicSession"]) ?? "2025-2026" : "2025-2026",
                 NetDue = r.Table.Columns.Contains("NetDue") && r["NetDue"] != DBNull.Value
                     ? Convert.ToDecimal(r["NetDue"]) : 0,
-                PhotoPath = r.Table.Columns.Contains("PhotoPath") ? Convert.ToString(r["PhotoPath"]) : null
+                PhotoPath = r.Table.Columns.Contains("PhotoPath") ? Convert.ToString(r["PhotoPath"]) : null,
+                WantTransport = r.Table.Columns.Contains("WantTransport") && r["WantTransport"] != DBNull.Value
+                    && Convert.ToBoolean(r["WantTransport"]),
+                TransportActive = r.Table.Columns.Contains("TransportActive") && r["TransportActive"] != DBNull.Value
+                    && Convert.ToBoolean(r["TransportActive"]),
+                MonthlyTransportFee = r.Table.Columns.Contains("MonthlyTransportFee") && r["MonthlyTransportFee"] != DBNull.Value
+                    ? Convert.ToDecimal(r["MonthlyTransportFee"]) : 0,
+                TransportActivatedOn = r.Table.Columns.Contains("TransportActivatedOn") && r["TransportActivatedOn"] != DBNull.Value
+                    ? Convert.ToDateTime(r["TransportActivatedOn"]) : (DateTime?)null
             };
         }
 

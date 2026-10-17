@@ -37,6 +37,8 @@ CREATE PROCEDURE dbo.usp_AdmitStudent
     @MonthlyTuitionFee  DECIMAL(18,2),
     @AcademicSession    NVARCHAR(20) = N'2025-2026',
     @PhotoPath          NVARCHAR(260) = NULL,
+    @WantTransport      BIT = 0,
+    @MonthlyTransportFee DECIMAL(18,2) = 0,
     @CreatedBy          NVARCHAR(100) = NULL,
     @StudentId          INT OUTPUT,
     @RegistrationNo     NVARCHAR(30) OUTPUT
@@ -57,6 +59,8 @@ BEGIN
     BEGIN RAISERROR(N'Roll number is required.', 16, 1); RETURN; END
     IF @MonthlyTuitionFee IS NULL OR @MonthlyTuitionFee < 0
     BEGIN RAISERROR(N'Tuition fee cannot be negative.', 16, 1); RETURN; END
+    IF @MonthlyTransportFee IS NULL OR @MonthlyTransportFee < 0
+    BEGIN RAISERROR(N'Transport fee cannot be negative.', 16, 1); RETURN; END
     IF @DateOfBirth IS NULL OR @DateOfBirth >= CAST(GETDATE() AS DATE)
     BEGIN RAISERROR(N'Date of birth must be in the past.', 16, 1); RETURN; END
     IF NOT EXISTS (SELECT 1 FROM dbo.Classes WHERE ClassId = @ClassId AND IsDeleted = 0)
@@ -89,7 +93,8 @@ BEGIN
     (
         RegistrationNo, FullName, FatherName, MotherName, BloodGroup, Gender, DateOfBirth,
         GuardianPhone, PresentAddress, PermanentAddress, ClassId, SectionId, RollNumber,
-        MonthlyTuitionFee, AdmissionDate, Status, PhotoPath, AcademicSession, CreatedBy
+        MonthlyTuitionFee, AdmissionDate, Status, PhotoPath, AcademicSession,
+        WantTransport, TransportActive, MonthlyTransportFee, TransportActivatedOn, CreatedBy
     )
     VALUES
     (
@@ -97,7 +102,8 @@ BEGIN
         NULLIF(LTRIM(RTRIM(@MotherName)), N''), @BloodGroup, @Gender, @DateOfBirth,
         LTRIM(RTRIM(@GuardianPhone)), @PresentAddress, @PermanentAddress, @ClassId, @SectionId,
         LTRIM(RTRIM(@RollNumber)), @MonthlyTuitionFee, CAST(GETDATE() AS DATE), 1,
-        @PhotoPath, ISNULL(NULLIF(LTRIM(RTRIM(@AcademicSession)), N''), N'2025-2026'), @CreatedBy
+        @PhotoPath, ISNULL(NULLIF(LTRIM(RTRIM(@AcademicSession)), N''), N'2025-2026'),
+        ISNULL(@WantTransport, 0), 0, ISNULL(@MonthlyTransportFee, 0), NULL, @CreatedBy
     );
 
     SET @StudentId = SCOPE_IDENTITY();
@@ -160,6 +166,10 @@ CREATE PROCEDURE dbo.usp_UpdateStudent
     @Status             INT,
     @PhotoPath          NVARCHAR(260) = NULL,
     @AcademicSession    NVARCHAR(20) = NULL,
+    @WantTransport      BIT = 0,
+    @TransportActive    BIT = 0,
+    @MonthlyTransportFee DECIMAL(18,2) = 0,
+    @TransportActivatedOn DATE = NULL,
     @UpdatedBy          NVARCHAR(100) = NULL
 AS
 BEGIN
@@ -181,10 +191,20 @@ BEGIN
     BEGIN RAISERROR(N'Roll number is required.', 16, 1); RETURN; END
     IF @MonthlyTuitionFee IS NULL OR @MonthlyTuitionFee < 0
     BEGIN RAISERROR(N'Tuition fee cannot be negative.', 16, 1); RETURN; END
+    IF @MonthlyTransportFee IS NULL OR @MonthlyTransportFee < 0
+    BEGIN RAISERROR(N'Transport fee cannot be negative.', 16, 1); RETURN; END
+    IF ISNULL(@TransportActive, 0) = 1 AND ISNULL(@MonthlyTransportFee, 0) <= 0
+    BEGIN RAISERROR(N'Set Monthly Transport Fee before activating Gari service.', 16, 1); RETURN; END
     IF @Status NOT BETWEEN 1 AND 5
     BEGIN RAISERROR(N'Invalid student status.', 16, 1); RETURN; END
     IF NOT EXISTS (SELECT 1 FROM dbo.Sections WHERE SectionId = @SectionId AND ClassId = @ClassId AND IsDeleted = 0)
     BEGIN RAISERROR(N'Section not found for class.', 16, 1); RETURN; END
+
+    DECLARE @PrevActivated DATE = (SELECT TransportActivatedOn FROM dbo.Students WHERE StudentId = @StudentId);
+    DECLARE @NewActive BIT = ISNULL(@TransportActive, 0);
+    DECLARE @NewActivated DATE = NULL;
+    IF @NewActive = 1
+        SET @NewActivated = COALESCE(@TransportActivatedOn, @PrevActivated, CAST(GETDATE() AS DATE));
 
     UPDATE dbo.Students
     SET FullName = LTRIM(RTRIM(@FullName)),
@@ -206,6 +226,10 @@ BEGIN
             WHEN @AcademicSession IS NULL OR LTRIM(RTRIM(@AcademicSession)) = N'' THEN AcademicSession
             ELSE LTRIM(RTRIM(@AcademicSession))
         END,
+        WantTransport = CASE WHEN @NewActive = 1 OR ISNULL(@WantTransport, 0) = 1 THEN 1 ELSE 0 END,
+        TransportActive = @NewActive,
+        MonthlyTransportFee = ISNULL(@MonthlyTransportFee, 0),
+        TransportActivatedOn = @NewActivated,
         UpdatedAt = SYSUTCDATETIME(),
         UpdatedBy = @UpdatedBy
     WHERE StudentId = @StudentId AND IsDeleted = 0;

@@ -46,7 +46,8 @@ namespace StudentManagement.BusinessLayer.Offline
                 Gender = Gender.Female, DateOfBirth = new DateTime(2012, 5, 14), GuardianPhone = "01711000001",
                 ClassId = 5, ClassName = "Class 10", SectionId = 51, SectionName = "A", RollNumber = "01",
                 MonthlyTuitionFee = 3500, AdmissionDate = new DateTime(2024, 1, 10), Status = StudentStatus.Active,
-                NetDue = 3500, PresentAddress = "Dhanmondi, Dhaka"
+                NetDue = 3500, PresentAddress = "Dhanmondi, Dhaka",
+                WantTransport = true, TransportActive = false, MonthlyTransportFee = 800
             });
             Students.Add(new StudentDto
             {
@@ -55,7 +56,9 @@ namespace StudentManagement.BusinessLayer.Offline
                 Gender = Gender.Male, DateOfBirth = new DateTime(2013, 8, 2), GuardianPhone = "01711000002",
                 ClassId = 4, ClassName = "Class 9", SectionId = 41, SectionName = "A", RollNumber = "05",
                 MonthlyTuitionFee = 3200, AdmissionDate = new DateTime(2024, 2, 1), Status = StudentStatus.Active,
-                NetDue = 0
+                NetDue = 0,
+                WantTransport = true, TransportActive = true, MonthlyTransportFee = 800,
+                TransportActivatedOn = new DateTime(2026, 9, 15)
             });
 
             Ledger.Add(new LedgerEntryDto

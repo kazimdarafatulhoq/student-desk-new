@@ -27,6 +27,8 @@ namespace StudentManagement.Desktop.Forms
         private bool _lookupsReady;
         private int _suppressSectionReload;
         private bool _classHandlerWired;
+        private bool _transportWasActive;
+        private DateTime? _transportActivatedOn;
         private readonly SemaphoreSlim _dbGate = new SemaphoreSlim(1, 1);
 
         /// <summary>Raised after a successful edit save / inactive when hosted in main menu.</summary>
@@ -67,12 +69,16 @@ namespace StudentManagement.Desktop.Forms
             txtRegNo.Visible = editMode;
             btnMarkInactive.Visible = editMode;
             btnReset.Visible = !editMode;
+            chkTransportActive.Visible = editMode;
             btnSave.Text = editMode ? "Save Changes" : "Save & Complete Admission";
             lblTitle.Text = editMode ? "Edit Student Profile" : "Student Registration & Admission Form";
             lblCap.Text = editMode
-                ? "Update biodata, class placement, and active/inactive status."
-                : "Capture student photo, biodata, guardian contacts, and class placement.";
+                ? "Update biodata, class placement, transport seat, and active/inactive status."
+                : "Capture student photo, biodata, guardian contacts, class placement, and transport interest.";
             Text = editMode ? "Edit Student Profile" : "Student Admission";
+            lblTransportHint.Text = editMode
+                ? "Tick Active when a Gari seat is free. Monthly transport fee starts from the next calendar month."
+                : "Interest only at admission. Activate later from Edit when a seat is free — billing starts next month.";
         }
 
         private void WireClassChangedHandler()
@@ -206,6 +212,13 @@ namespace StudentManagement.Desktop.Forms
                 txtTuitionFee.Text = student.MonthlyTuitionFee.ToString("0.##");
                 cboStatus.SelectedItem = student.Status;
 
+                chkWantTransport.Checked = student.WantTransport;
+                chkTransportActive.Checked = student.TransportActive;
+                _transportWasActive = student.TransportActive;
+                _transportActivatedOn = student.TransportActivatedOn;
+                txtTransportFee.Text = student.MonthlyTransportFee.ToString("0.##");
+                RefreshTransportHint();
+
                 _existingPhotoPath = student.PhotoPath;
                 if (!string.IsNullOrWhiteSpace(student.PhotoPath) && File.Exists(student.PhotoPath))
                 {
@@ -248,6 +261,56 @@ namespace StudentManagement.Desktop.Forms
             {
                 txtPermanentAddress.Enabled = true;
             }
+        }
+
+        private void chkWantTransport_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (!chkWantTransport.Checked && chkTransportActive.Checked)
+                chkTransportActive.Checked = false;
+            RefreshTransportHint();
+        }
+
+        private void chkTransportActive_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (chkTransportActive.Checked && !chkWantTransport.Checked)
+                chkWantTransport.Checked = true;
+            RefreshTransportHint();
+        }
+
+        private void RefreshTransportHint()
+        {
+            if (!IsEditMode)
+            {
+                lblTransportHint.Text = chkWantTransport.Checked
+                    ? "Transport interest recorded. Service stays waitlisted until you Activate from Edit Profile."
+                    : "Interest only at admission. Activate later from Edit when a seat is free — billing starts next month.";
+                return;
+            }
+
+            if (chkTransportActive.Checked)
+            {
+                var start = (_transportWasActive && _transportActivatedOn.HasValue
+                    ? _transportActivatedOn.Value
+                    : DateTime.Today);
+                var firstBill = new DateTime(start.Year, start.Month, 1).AddMonths(1);
+                lblTransportHint.Text =
+                    $"Active — monthly transport fee auto-adds from {firstBill:MMM-yyyy} with tuition collection.";
+            }
+            else if (chkWantTransport.Checked)
+            {
+                lblTransportHint.Text = "Waitlisted for Gari. Tick \"Transport service Active\" when a seat is available.";
+            }
+            else
+            {
+                lblTransportHint.Text = "No transport request. Tick Want + Active when assigning a seat.";
+            }
+        }
+
+        private decimal ReadTransportFee()
+        {
+            if (!decimal.TryParse(txtTransportFee.Text.Trim(), out var fee) || fee < 0)
+                throw new ArgumentException("Monthly transport fee must be a valid non-negative number.");
+            return fee;
         }
 
         private void btnBrowsePhoto_Click(object? sender, EventArgs e)
@@ -376,6 +439,7 @@ namespace StudentManagement.Desktop.Forms
 
         private async Task SaveAdmitAsync(decimal tuition)
         {
+            decimal transportFee = ReadTransportFee();
             StudentDto result = await Students.AdmitAsync(new StudentAdmissionRequest
             {
                 FullName = txtFullName.Text,
@@ -393,7 +457,9 @@ namespace StudentManagement.Desktop.Forms
                 MonthlyTuitionFee = tuition,
                 AcademicSession = AppSession.Current != null ? AppSession.Current.AcademicSession : "2025-2026",
                 CreatedBy = AppSession.Current != null ? AppSession.Current.Username : null,
-                PhotoPath = _selectedPhotoPath
+                PhotoPath = _selectedPhotoPath,
+                WantTransport = chkWantTransport.Checked,
+                MonthlyTransportFee = transportFee
             });
 
             string savedPhoto = SavePhotoForStudent(result.RegistrationNo);
@@ -401,9 +467,12 @@ namespace StudentManagement.Desktop.Forms
             try { await Students.UpdateAsync(result, AppSession.Current?.Username); }
             catch { /* offline may skip path rewrite */ }
 
+            string transportNote = chkWantTransport.Checked
+                ? "\nTransport: waitlisted (activate later when seat is free)."
+                : string.Empty;
             MessageBox.Show(
                 "Student admitted successfully.\nRegistration ID: " + result.RegistrationNo +
-                "\nPhoto saved.",
+                "\nPhoto saved." + transportNote,
                 "Admission Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -416,6 +485,17 @@ namespace StudentManagement.Desktop.Forms
             string? photo = _existingPhotoPath;
             if (HasPhotoSelected())
                 photo = SavePhotoForStudent(regNo);
+
+            decimal transportFee = ReadTransportFee();
+            bool active = chkTransportActive.Checked;
+            if (active && transportFee <= 0)
+                throw new ArgumentException("Set Monthly Transport Fee before activating Gari service.");
+
+            DateTime? activatedOn = _transportActivatedOn;
+            if (active && !_transportWasActive)
+                activatedOn = DateTime.Today;
+            else if (!active)
+                activatedOn = null;
 
             var dto = new StudentDto
             {
@@ -436,16 +516,26 @@ namespace StudentManagement.Desktop.Forms
                 MonthlyTuitionFee = tuition,
                 Status = cboStatus.SelectedItem is StudentStatus st ? st : StudentStatus.Active,
                 AcademicSession = AppSession.Current != null ? AppSession.Current.AcademicSession : "2025-2026",
-                PhotoPath = photo
+                PhotoPath = photo,
+                WantTransport = chkWantTransport.Checked || active,
+                TransportActive = active,
+                MonthlyTransportFee = transportFee,
+                TransportActivatedOn = activatedOn
             };
 
             await Students.UpdateAsync(dto, AppSession.Current?.Username);
+
+            string transportMsg = active
+                ? "\nTransport: Active — fee starts next month with tuition."
+                : (dto.WantTransport ? "\nTransport: waitlisted." : "\nTransport: none.");
             MessageBox.Show(
-                "Student profile updated.\nRegistration ID: " + regNo + "\nStatus: " + dto.Status,
+                "Student profile updated.\nRegistration ID: " + regNo + "\nStatus: " + dto.Status + transportMsg,
                 "Profile Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
 
+            _transportWasActive = dto.TransportActive;
+            _transportActivatedOn = dto.TransportActivatedOn;
             btnMarkInactive.Enabled = dto.Status == StudentStatus.Active;
             // Return to Student Directory inside main menu content area.
             EditCompleted?.Invoke();
@@ -495,6 +585,12 @@ namespace StudentManagement.Desktop.Forms
             chkSameAddress.Checked = false;
             txtRollNumber.Clear();
             txtTuitionFee.Text = "2500";
+            chkWantTransport.Checked = false;
+            chkTransportActive.Checked = false;
+            txtTransportFee.Text = "0";
+            _transportWasActive = false;
+            _transportActivatedOn = null;
+            RefreshTransportHint();
             dtpDateOfBirth.Value = DateTime.Today.AddYears(-12);
             ClearPhoto();
             UpdateAge();

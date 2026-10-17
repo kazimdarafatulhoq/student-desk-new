@@ -102,6 +102,8 @@ ORDER BY s.ClassId, s.RollNumber, s.FullName", con);
                 Execute.AddParameter("@AcademicSession",
                     string.IsNullOrWhiteSpace(request.AcademicSession) ? "2025-2026" : request.AcademicSession.Trim()),
                 Execute.AddParameter("@PhotoPath", request.PhotoPath),
+                Execute.AddParameter("@WantTransport", request.WantTransport),
+                Execute.AddParameter("@MonthlyTransportFee", request.MonthlyTransportFee < 0 ? 0m : request.MonthlyTransportFee),
                 Execute.AddParameter("@CreatedBy", request.CreatedBy),
                 pStudentId,
                 pRegNo);
@@ -133,6 +135,13 @@ ORDER BY s.ClassId, s.RollNumber, s.FullName", con);
                 Execute.AddParameter("@Status", (int)student.Status),
                 Execute.AddParameter("@PhotoPath", student.PhotoPath),
                 Execute.AddParameter("@AcademicSession", student.AcademicSession),
+                Execute.AddParameter("@WantTransport", student.WantTransport || student.TransportActive),
+                Execute.AddParameter("@TransportActive", student.TransportActive),
+                Execute.AddParameter("@MonthlyTransportFee", student.MonthlyTransportFee < 0 ? 0m : student.MonthlyTransportFee),
+                Execute.AddParameter("@TransportActivatedOn",
+                    student.TransportActive
+                        ? (object)(student.TransportActivatedOn ?? DateTime.Today).Date
+                        : DBNull.Value),
                 Execute.AddParameter("@UpdatedBy", updatedBy));
         }
 

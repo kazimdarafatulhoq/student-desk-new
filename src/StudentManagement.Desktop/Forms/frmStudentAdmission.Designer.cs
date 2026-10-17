@@ -51,6 +51,11 @@ namespace StudentManagement.Desktop.Forms
         private ComboBox cboStatus;
         private Label lblRegNo;
         private TextBox txtRegNo;
+        private CheckBox chkWantTransport;
+        private CheckBox chkTransportActive;
+        private Label lblTransportFee;
+        private TextBox txtTransportFee;
+        private Label lblTransportHint;
         private Button btnSave;
         private Button btnReset;
         private Button btnMarkInactive;
@@ -110,6 +115,11 @@ namespace StudentManagement.Desktop.Forms
             this.cboStatus = new System.Windows.Forms.ComboBox();
             this.lblRegNo = new System.Windows.Forms.Label();
             this.txtRegNo = new System.Windows.Forms.TextBox();
+            this.chkWantTransport = new System.Windows.Forms.CheckBox();
+            this.chkTransportActive = new System.Windows.Forms.CheckBox();
+            this.lblTransportFee = new System.Windows.Forms.Label();
+            this.txtTransportFee = new System.Windows.Forms.TextBox();
+            this.lblTransportHint = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.btnMarkInactive = new System.Windows.Forms.Button();
@@ -476,11 +486,16 @@ namespace StudentManagement.Desktop.Forms
             this.grpAcademic.Controls.Add(this.cboStatus);
             this.grpAcademic.Controls.Add(this.lblRegNo);
             this.grpAcademic.Controls.Add(this.txtRegNo);
+            this.grpAcademic.Controls.Add(this.chkWantTransport);
+            this.grpAcademic.Controls.Add(this.chkTransportActive);
+            this.grpAcademic.Controls.Add(this.lblTransportFee);
+            this.grpAcademic.Controls.Add(this.txtTransportFee);
+            this.grpAcademic.Controls.Add(this.lblTransportHint);
             this.grpAcademic.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.grpAcademic.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.grpAcademic.Location = new System.Drawing.Point(16, 442);
             this.grpAcademic.Name = "grpAcademic";
-            this.grpAcademic.Size = new System.Drawing.Size(920, 160);
+            this.grpAcademic.Size = new System.Drawing.Size(920, 220);
             this.grpAcademic.TabIndex = 5;
             this.grpAcademic.TabStop = false;
             this.grpAcademic.Text = "3. ACADEMIC ENROLLMENT";
@@ -614,9 +629,64 @@ namespace StudentManagement.Desktop.Forms
             this.txtRegNo.TabIndex = 11;
             this.txtRegNo.Visible = false;
             //
+            // chkWantTransport
+            //
+            this.chkWantTransport.AutoSize = true;
+            this.chkWantTransport.ForeColor = System.Drawing.Color.White;
+            this.chkWantTransport.Location = new System.Drawing.Point(260, 122);
+            this.chkWantTransport.Name = "chkWantTransport";
+            this.chkWantTransport.Size = new System.Drawing.Size(320, 19);
+            this.chkWantTransport.TabIndex = 12;
+            this.chkWantTransport.Text = "Wants school transport (Gari) — waitlist if no seat";
+            this.chkWantTransport.CheckedChanged += new System.EventHandler(this.chkWantTransport_CheckedChanged);
+            //
+            // chkTransportActive
+            //
+            this.chkTransportActive.AutoSize = true;
+            this.chkTransportActive.ForeColor = System.Drawing.Color.White;
+            this.chkTransportActive.Location = new System.Drawing.Point(260, 148);
+            this.chkTransportActive.Name = "chkTransportActive";
+            this.chkTransportActive.Size = new System.Drawing.Size(280, 19);
+            this.chkTransportActive.TabIndex = 13;
+            this.chkTransportActive.Text = "Transport service Active (seat assigned)";
+            this.chkTransportActive.Visible = false;
+            this.chkTransportActive.CheckedChanged += new System.EventHandler(this.chkTransportActive_CheckedChanged);
+            //
+            // lblTransportFee
+            //
+            this.lblTransportFee.AutoSize = true;
+            this.lblTransportFee.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
+            this.lblTransportFee.Location = new System.Drawing.Point(600, 100);
+            this.lblTransportFee.Name = "lblTransportFee";
+            this.lblTransportFee.Size = new System.Drawing.Size(130, 15);
+            this.lblTransportFee.TabIndex = 14;
+            this.lblTransportFee.Text = "Monthly Transport Fee";
+            //
+            // txtTransportFee
+            //
+            this.txtTransportFee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
+            this.txtTransportFee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTransportFee.ForeColor = System.Drawing.Color.White;
+            this.txtTransportFee.Location = new System.Drawing.Point(600, 120);
+            this.txtTransportFee.Name = "txtTransportFee";
+            this.txtTransportFee.Size = new System.Drawing.Size(160, 23);
+            this.txtTransportFee.TabIndex = 15;
+            this.txtTransportFee.Text = "0";
+            //
+            // lblTransportHint
+            //
+            this.lblTransportHint.AutoSize = true;
+            this.lblTransportHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
+            this.lblTransportHint.Location = new System.Drawing.Point(260, 178);
+            this.lblTransportHint.Name = "lblTransportHint";
+            this.lblTransportHint.Size = new System.Drawing.Size(520, 15);
+            this.lblTransportHint.TabIndex = 16;
+            this.lblTransportHint.Tag = "muted";
+            this.lblTransportHint.Text = "Interest only at admission. Activate later from Edit when a seat is free — billing starts next month.";
+            //
             // btnSave
             //
-            this.btnSave.Location = new System.Drawing.Point(16, 622);
+            this.btnSave.Location = new System.Drawing.Point(16, 682);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(220, 40);
             this.btnSave.TabIndex = 6;
@@ -625,7 +695,7 @@ namespace StudentManagement.Desktop.Forms
             //
             // btnReset
             //
-            this.btnReset.Location = new System.Drawing.Point(250, 622);
+            this.btnReset.Location = new System.Drawing.Point(250, 682);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(140, 40);
             this.btnReset.TabIndex = 7;
@@ -635,7 +705,7 @@ namespace StudentManagement.Desktop.Forms
             //
             // btnMarkInactive
             //
-            this.btnMarkInactive.Location = new System.Drawing.Point(410, 622);
+            this.btnMarkInactive.Location = new System.Drawing.Point(410, 682);
             this.btnMarkInactive.Name = "btnMarkInactive";
             this.btnMarkInactive.Size = new System.Drawing.Size(160, 40);
             this.btnMarkInactive.TabIndex = 8;
@@ -650,7 +720,7 @@ namespace StudentManagement.Desktop.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(12)))), ((int)(((byte)(23)))));
-            this.ClientSize = new System.Drawing.Size(1100, 720);
+            this.ClientSize = new System.Drawing.Size(1100, 760);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblCap);
             this.Controls.Add(this.grpPersonal);

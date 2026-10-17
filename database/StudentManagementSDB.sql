@@ -175,6 +175,10 @@ CREATE TABLE dbo.Students
     Status              INT NOT NULL CONSTRAINT DF_Students_Status DEFAULT (1),
     PhotoPath           NVARCHAR(260) NULL,
     AcademicSession     NVARCHAR(20) NOT NULL CONSTRAINT DF_Students_Session DEFAULT (N'2025-2026'),
+    WantTransport       BIT NOT NULL CONSTRAINT DF_Students_WantTransport DEFAULT (0),
+    TransportActive     BIT NOT NULL CONSTRAINT DF_Students_TransportActive DEFAULT (0),
+    MonthlyTransportFee DECIMAL(18,2) NOT NULL CONSTRAINT DF_Students_TransportFee DEFAULT (0),
+    TransportActivatedOn DATE NULL,
     CreatedAt           DATETIME2 NOT NULL CONSTRAINT DF_Students_CreatedAt DEFAULT (SYSUTCDATETIME()),
     CreatedBy           NVARCHAR(100) NULL,
     UpdatedAt           DATETIME2 NULL,
@@ -186,7 +190,8 @@ CREATE TABLE dbo.Students
     CONSTRAINT CK_Students_Gender CHECK (Gender BETWEEN 1 AND 3),
     CONSTRAINT CK_Students_BloodGroup CHECK (BloodGroup BETWEEN 1 AND 8),
     CONSTRAINT CK_Students_Status CHECK (Status BETWEEN 1 AND 5),
-    CONSTRAINT CK_Students_Fee CHECK (MonthlyTuitionFee >= 0)
+    CONSTRAINT CK_Students_Fee CHECK (MonthlyTuitionFee >= 0),
+    CONSTRAINT CK_Students_TransportFee CHECK (MonthlyTransportFee >= 0)
 );
 GO
 

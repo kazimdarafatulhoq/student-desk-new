@@ -30,6 +30,17 @@ namespace StudentManagement.UserObjects.Objects
         public string AcademicSession { get; set; } = "2025-2026";
         public decimal NetDue { get; set; }
         public string? PhotoPath { get; set; }
+
+        /// <summary>Guardian requested school transport (Gari) — waitlisted until a seat is assigned.</summary>
+        public bool WantTransport { get; set; }
+
+        /// <summary>Transport seat assigned; monthly transport fee bills from the month after activation.</summary>
+        public bool TransportActive { get; set; }
+
+        public decimal MonthlyTransportFee { get; set; }
+
+        /// <summary>Date seat was activated. Billing starts the following calendar month.</summary>
+        public DateTime? TransportActivatedOn { get; set; }
     }
 
     public class StudentAdmissionRequest
@@ -50,6 +61,11 @@ namespace StudentManagement.UserObjects.Objects
         public string AcademicSession { get; set; } = "2025-2026";
         public string? CreatedBy { get; set; }
         public string? PhotoPath { get; set; }
+
+        /// <summary>Collect transport interest at admission (service stays inactive until seat assigned).</summary>
+        public bool WantTransport { get; set; }
+
+        public decimal MonthlyTransportFee { get; set; }
     }
 
     public class StudentSearchFilter

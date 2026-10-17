@@ -65,9 +65,13 @@ Tuition Fee · Registration Fee · New Admission / Re-admission · Monthly Trans
 | `usp_GetClassSectionLookup` | Class/section picker |
 | `usp_PostTuitionInvoice` | Post invoice + ledger (**Fee Collection** save) |
 | `usp_RecordFeePayment` | Post payment (+ optional waiver) (**Fee Collection** save) |
-| `usp_AdmitStudent` | Admit student + opening tuition invoice (**Admission** save) |
-| `usp_UpdateStudent` | Edit student profile (**Edit Profile** save) |
+| `usp_AdmitStudent` | Admit student + opening tuition invoice (**Admission** save); collects transport waitlist |
+| `usp_UpdateStudent` | Edit student profile (**Edit Profile** save); activate Gari seat |
 | `usp_SetStudentStatus` | Mark inactive / change status |
+
+**Transport (Gari):** admit with `WantTransport` (waitlist). Activate later via Edit (`TransportActive`). Fee Collection auto-adds `Monthly Transport Fee` for selected months **after** the activation month.
+
+Existing databases: run `Alter_Students_Transport.sql`, then re-run `StoredProcedures_StudentSave.sql`.
 
 The desktop app persists **admission, profile edit, status change, and fee collection** through these stored procedures (not EF entity inserts for those paths).
 
