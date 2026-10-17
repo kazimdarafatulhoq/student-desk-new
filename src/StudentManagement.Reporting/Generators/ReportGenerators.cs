@@ -395,29 +395,31 @@ namespace StudentManagement.Reporting.Generators
                     });
                 });
 
-                // Pinned to the bottom edge of the half-page card (not after content flow).
+                // Sticky footer — same two equal signature columns as WinForms preview.
                 layers.Layer().AlignBottom().Column(footer =>
                 {
                     footer.Item().Row(sig =>
                     {
-                        sig.RelativeItem().AlignCenter().Column(c =>
-                        {
-                            c.Item().Width(120).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
-                            c.Item().PaddingTop(3).Text("Class Teacher")
-                                .FontSize(8).FontColor(Colors.Grey.Darken1);
-                        });
-                        sig.RelativeItem().AlignCenter().Column(c =>
-                        {
-                            c.Item().Width(140).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
-                            c.Item().PaddingTop(3).Text("Principal & Controller")
-                                .Bold().FontSize(8).FontColor(Colors.BlueGrey.Darken4);
-                        });
+                        DrawSignatureColumn(sig.RelativeItem(), "Class Teacher");
+                        DrawSignatureColumn(sig.RelativeItem(), "Principal & Controller");
                     });
 
                     footer.Item().PaddingTop(6).AlignCenter()
                         .Text($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}   ·   Half A4")
                         .FontSize(7).FontColor(Colors.Grey.Darken1);
                 });
+            });
+        }
+
+        private static void DrawSignatureColumn(IContainer container, string label)
+        {
+            container.AlignCenter().Column(c =>
+            {
+                c.Item().Width(140).BorderBottom(1).BorderColor(Colors.Grey.Darken1);
+                c.Item().PaddingTop(3).AlignCenter()
+                    .Text(label)
+                    .FontSize(8)
+                    .FontColor(Colors.Grey.Darken1);
             });
         }
 

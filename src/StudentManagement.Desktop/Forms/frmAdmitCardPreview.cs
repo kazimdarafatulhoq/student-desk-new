@@ -186,26 +186,31 @@ namespace StudentManagement.Desktop.Forms
             instBox.Controls.Add(lblInst);
             cardPanel.Controls.Add(instBox);
 
-            // Sticky footer pinned to the bottom edge of the half-page card preview.
+            // Sticky footer — same layout/style as PDF admit card (two equal signature columns).
             const int footerPad = 16;
             const int sigHeight = 40;
             const int metaHeight = 22;
             int metaTop = cardPanel.Height - footerPad - metaHeight;
             int sigTop = metaTop - sigHeight - 4;
+            const int sigWidth = 200;
+            int leftSigX = 80;
+            int rightSigX = cardPanel.Width - 80 - sigWidth;
 
-            var sigTeacher = MakeLabel("_______________________\nClass Teacher", 9, FontStyle.Regular, Muted, true);
-            sigTeacher.Location = new Point(80, sigTop);
-            sigTeacher.Size = new Size(200, sigHeight);
+            var sigTeacher = MakeLabel("_______________________\nClass Teacher", 8, FontStyle.Regular, Muted, true);
+            sigTeacher.Location = new Point(leftSigX, sigTop);
+            sigTeacher.Size = new Size(sigWidth, sigHeight);
             cardPanel.Controls.Add(sigTeacher);
 
-            var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 9, FontStyle.Bold, Navy, true);
-            sigPrincipal.Location = new Point(420, sigTop);
-            sigPrincipal.Size = new Size(220, sigHeight);
+            var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 8, FontStyle.Regular, Muted, true);
+            sigPrincipal.Location = new Point(rightSigX, sigTop);
+            sigPrincipal.Size = new Size(sigWidth, sigHeight);
             cardPanel.Controls.Add(sigPrincipal);
 
-            var footer = MakeLabel($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}", 8, FontStyle.Regular, Muted, true);
+            var footer = MakeLabel(
+                $"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}   ·   Half A4",
+                7, FontStyle.Regular, Muted, true);
             footer.Location = new Point(24, metaTop);
-            footer.Size = new Size(672, metaHeight);
+            footer.Size = new Size(cardPanel.Width - 48, metaHeight);
             cardPanel.Controls.Add(footer);
 
             return cardPanel;
