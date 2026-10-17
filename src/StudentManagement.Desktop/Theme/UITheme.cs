@@ -14,7 +14,7 @@ namespace StudentManagement.Desktop.Theme
         // Shell surfaces (navbar / header / body).
         public static readonly Color Canvas = Color.FromArgb(17, 24, 39);      // #111827 body
         public static readonly Color Sidebar = Color.FromArgb(11, 14, 20);     // #0B0E14 navbar
-        public static readonly Color Card = Color.FromArgb(13, 20, 48);
+        public static readonly Color Card = Color.FromArgb(11, 14, 20);
         public static readonly Color InputBack = Color.FromArgb(17, 24, 39);
         public static readonly Color Border = Color.FromArgb(36, 48, 73);
         public static readonly Color GridAlt = Color.FromArgb(11, 18, 40);
