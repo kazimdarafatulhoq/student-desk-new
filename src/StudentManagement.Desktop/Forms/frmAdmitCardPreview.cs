@@ -127,10 +127,11 @@ namespace StudentManagement.Desktop.Forms
                 Location = new Point(24, y),
                 Size = new Size(672, 130)
             };
+            // Photo on the right side of the student info box.
             var photo = new Panel
             {
                 BackColor = Color.White,
-                Location = new Point(12, 12),
+                Location = new Point(infoBox.Width - 12 - 90, 12),
                 Size = new Size(90, 106),
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -158,11 +159,11 @@ namespace StudentManagement.Desktop.Forms
             infoBox.Controls.Add(photo);
 
             int iy = 12;
-            AddInfoRow(infoBox, "Student Name:", card.FullName, Navy, 118, ref iy);
-            AddInfoRow(infoBox, "Registration No:", card.RegistrationNo, AccentBlue, 118, ref iy);
-            AddInfoRow(infoBox, "Class & Section:", FormatClassSection(card), Navy, 118, ref iy);
-            AddInfoRow(infoBox, "Roll No:", card.RollNumber, Navy, 118, ref iy);
-            AddInfoRow(infoBox, "Venue:", card.Venue, Navy, 118, ref iy);
+            AddInfoRow(infoBox, "Student Name:", card.FullName, Navy, 12, ref iy);
+            AddInfoRow(infoBox, "Registration No:", card.RegistrationNo, AccentBlue, 12, ref iy);
+            AddInfoRow(infoBox, "Class & Section:", FormatClassSection(card), Navy, 12, ref iy);
+            AddInfoRow(infoBox, "Roll No:", card.RollNumber, Navy, 12, ref iy);
+            AddInfoRow(infoBox, "Venue:", card.Venue, Navy, 12, ref iy);
             cardPanel.Controls.Add(infoBox);
             y += 146;
 

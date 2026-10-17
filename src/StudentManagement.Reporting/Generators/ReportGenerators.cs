@@ -359,6 +359,17 @@ namespace StudentManagement.Reporting.Generators
 
                     cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Row(row =>
                     {
+                        // Student details on the left, photo on the right.
+                        row.RelativeItem().PaddingRight(10).Column(info =>
+                        {
+                            info.Spacing(2);
+                            InfoLine(info, "Student Name:", card.FullName, false);
+                            InfoLine(info, "Registration No:", card.RegistrationNo, true);
+                            InfoLine(info, "Class & Section:", FormatClassSection(card), false);
+                            InfoLine(info, "Roll No:", card.RollNumber, false);
+                            InfoLine(info, "Venue:", card.Venue, false);
+                        });
+
                         row.ConstantItem(72).Height(84).Background(Colors.White)
                             .Border(1).BorderColor(Colors.Grey.Lighten1)
                             .AlignCenter().AlignMiddle().Element(photo =>
@@ -369,16 +380,6 @@ namespace StudentManagement.Reporting.Generators
                                     photo.AlignCenter().AlignMiddle().Text("PHOTO")
                                         .FontSize(8).FontColor(Colors.Grey.Darken1);
                             });
-
-                        row.RelativeItem().PaddingLeft(10).Column(info =>
-                        {
-                            info.Spacing(2);
-                            InfoLine(info, "Student Name:", card.FullName, false);
-                            InfoLine(info, "Registration No:", card.RegistrationNo, true);
-                            InfoLine(info, "Class & Section:", FormatClassSection(card), false);
-                            InfoLine(info, "Roll No:", card.RollNumber, false);
-                            InfoLine(info, "Venue:", card.Venue, false);
-                        });
                     });
 
                     cardCol.Item().PaddingTop(8).Background(Colors.Grey.Lighten4).Padding(8).Column(inst =>
