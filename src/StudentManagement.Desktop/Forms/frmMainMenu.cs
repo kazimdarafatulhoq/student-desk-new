@@ -312,15 +312,22 @@ namespace StudentManagement.Desktop.Forms
             button.TextImageRelation = TextImageRelation.ImageBeforeText;
             button.ImageAlign = ContentAlignment.MiddleLeft;
             button.TextAlign = ContentAlignment.MiddleLeft;
-            button.Height = 50;
+            button.Height = 40;
             button.UseCompatibleTextRendering = true;
         }
 
         private void ApplySidebarLayout(bool expanded)
         {
             _sidebarExpanded = expanded;
-            pnlSidebar.Width = expanded ? 300 : 72;
+            pnlSidebar.Width = expanded ? 320 : 72;
             pnlProfile.Visible = expanded;
+
+            // Keep menu fully visible — no bottom/side scrollbars on the nav strip.
+            navFlow.AutoScroll = false;
+            navFlow.HorizontalScroll.Maximum = 0;
+            navFlow.HorizontalScroll.Visible = false;
+            navFlow.VerticalScroll.Maximum = 0;
+            navFlow.VerticalScroll.Visible = false;
 
             foreach (Control host in pnlSidebar.Controls)
             {
@@ -338,11 +345,11 @@ namespace StudentManagement.Desktop.Forms
                     string label = b.AccessibleName ?? string.Empty;
                     if (expanded)
                     {
-                        b.Width = 272;
+                        b.Width = 292;
                         b.Text = label;
                         b.TextAlign = ContentAlignment.MiddleLeft;
                         b.ImageAlign = ContentAlignment.MiddleLeft;
-                        b.Padding = new Padding(12, 10, 8, 10);
+                        b.Padding = new Padding(10, 6, 6, 6);
                         b.TextImageRelation = TextImageRelation.ImageBeforeText;
                     }
                     else
@@ -356,7 +363,7 @@ namespace StudentManagement.Desktop.Forms
                         b.TextImageRelation = TextImageRelation.Overlay;
                     }
 
-                    b.Height = 50;
+                    b.Height = 40;
                 }
 
                 foreach (Control child in host.Controls)

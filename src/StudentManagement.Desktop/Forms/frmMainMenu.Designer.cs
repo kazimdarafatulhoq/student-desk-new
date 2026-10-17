@@ -98,7 +98,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Name = "pnlSidebar";
             this.pnlSidebar.Padding = new System.Windows.Forms.Padding(10, 12, 10, 12);
-            this.pnlSidebar.Size = new System.Drawing.Size(300, 700);
+            this.pnlSidebar.Size = new System.Drawing.Size(320, 700);
             this.pnlSidebar.TabIndex = 0;
             this.pnlSidebar.Tag = "sidebar";
             //
@@ -112,7 +112,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlProfile.Location = new System.Drawing.Point(10, 12);
             this.pnlProfile.Name = "pnlProfile";
             this.pnlProfile.Padding = new System.Windows.Forms.Padding(8, 4, 8, 8);
-            this.pnlProfile.Size = new System.Drawing.Size(280, 72);
+            this.pnlProfile.Size = new System.Drawing.Size(300, 64);
             this.pnlProfile.TabIndex = 0;
             //
             // lblAvatar
@@ -158,10 +158,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnToggleSidebar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnToggleSidebar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnToggleSidebar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnToggleSidebar.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnToggleSidebar.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnToggleSidebar.Name = "btnToggleSidebar";
-            this.btnToggleSidebar.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnToggleSidebar.Size = new System.Drawing.Size(272, 50);
+            this.btnToggleSidebar.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnToggleSidebar.Size = new System.Drawing.Size(292, 40);
             this.btnToggleSidebar.TabIndex = 0;
             this.btnToggleSidebar.Tag = "nav";
             this.btnToggleSidebar.Text = "Collapse";
@@ -175,10 +175,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnDashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDashboard.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnDashboard.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnDashboard.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnDashboard.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnDashboard.Name = "btnDashboard";
-            this.btnDashboard.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnDashboard.Size = new System.Drawing.Size(272, 50);
+            this.btnDashboard.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnDashboard.Size = new System.Drawing.Size(292, 40);
             this.btnDashboard.TabIndex = 1;
             this.btnDashboard.Tag = "nav";
             this.btnDashboard.Text = "Dashboard";
@@ -192,10 +192,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnAdmission.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdmission.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnAdmission.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnAdmission.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnAdmission.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnAdmission.Name = "btnAdmission";
-            this.btnAdmission.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnAdmission.Size = new System.Drawing.Size(272, 50);
+            this.btnAdmission.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnAdmission.Size = new System.Drawing.Size(292, 40);
             this.btnAdmission.TabIndex = 2;
             this.btnAdmission.Tag = "nav";
             this.btnAdmission.Text = "Student Registration";
@@ -209,10 +209,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnSearch.Size = new System.Drawing.Size(272, 50);
+            this.btnSearch.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnSearch.Size = new System.Drawing.Size(292, 40);
             this.btnSearch.TabIndex = 3;
             this.btnSearch.Tag = "nav";
             this.btnSearch.Text = "Student Directory";
@@ -226,10 +226,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnFeeCollection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFeeCollection.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnFeeCollection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnFeeCollection.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnFeeCollection.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnFeeCollection.Name = "btnFeeCollection";
-            this.btnFeeCollection.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnFeeCollection.Size = new System.Drawing.Size(272, 50);
+            this.btnFeeCollection.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnFeeCollection.Size = new System.Drawing.Size(292, 40);
             this.btnFeeCollection.TabIndex = 4;
             this.btnFeeCollection.Tag = "nav";
             this.btnFeeCollection.Text = "Fee Collection Counter";
@@ -243,10 +243,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnLedger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLedger.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnLedger.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnLedger.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnLedger.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnLedger.Name = "btnLedger";
-            this.btnLedger.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnLedger.Size = new System.Drawing.Size(272, 50);
+            this.btnLedger.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnLedger.Size = new System.Drawing.Size(292, 40);
             this.btnLedger.TabIndex = 5;
             this.btnLedger.Tag = "nav";
             this.btnLedger.Text = "Student Ledger";
@@ -260,10 +260,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnExamClearance.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExamClearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnExamClearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnExamClearance.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnExamClearance.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnExamClearance.Name = "btnExamClearance";
-            this.btnExamClearance.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnExamClearance.Size = new System.Drawing.Size(272, 50);
+            this.btnExamClearance.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnExamClearance.Size = new System.Drawing.Size(292, 40);
             this.btnExamClearance.TabIndex = 6;
             this.btnExamClearance.Tag = "nav";
             this.btnExamClearance.Text = "Exam Fee Eligibility";
@@ -277,10 +277,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnAdmitCard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdmitCard.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnAdmitCard.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnAdmitCard.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnAdmitCard.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnAdmitCard.Name = "btnAdmitCard";
-            this.btnAdmitCard.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnAdmitCard.Size = new System.Drawing.Size(272, 50);
+            this.btnAdmitCard.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnAdmitCard.Size = new System.Drawing.Size(292, 40);
             this.btnAdmitCard.TabIndex = 7;
             this.btnAdmitCard.Tag = "nav";
             this.btnAdmitCard.Text = "Admit Card Printing";
@@ -294,10 +294,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnClass.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClass.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnClass.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnClass.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnClass.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnClass.Name = "btnClass";
-            this.btnClass.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnClass.Size = new System.Drawing.Size(272, 50);
+            this.btnClass.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnClass.Size = new System.Drawing.Size(292, 40);
             this.btnClass.TabIndex = 8;
             this.btnClass.Tag = "nav";
             this.btnClass.Text = "Class Setup";
@@ -311,10 +311,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnSection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSection.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnSection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnSection.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnSection.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnSection.Name = "btnSection";
-            this.btnSection.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnSection.Size = new System.Drawing.Size(272, 50);
+            this.btnSection.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnSection.Size = new System.Drawing.Size(292, 40);
             this.btnSection.TabIndex = 9;
             this.btnSection.Tag = "nav";
             this.btnSection.Text = "Section Setup";
@@ -328,10 +328,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUsers.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnUsers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnUsers.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnUsers.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnUsers.Name = "btnUsers";
-            this.btnUsers.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnUsers.Size = new System.Drawing.Size(272, 50);
+            this.btnUsers.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnUsers.Size = new System.Drawing.Size(292, 40);
             this.btnUsers.TabIndex = 10;
             this.btnUsers.Tag = "nav";
             this.btnUsers.Text = "User Access & Security";
@@ -345,10 +345,10 @@ namespace StudentManagement.Desktop.Forms
             this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnLogout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.btnLogout.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
+            this.btnLogout.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnLogout.Size = new System.Drawing.Size(272, 50);
+            this.btnLogout.Padding = new System.Windows.Forms.Padding(10, 6, 6, 6);
+            this.btnLogout.Size = new System.Drawing.Size(292, 40);
             this.btnLogout.TabIndex = 11;
             this.btnLogout.Tag = "nav-danger";
             this.btnLogout.Text = "Sign Out";
@@ -358,7 +358,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblSecOps.AutoSize = true;
             this.lblSecOps.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSecOps.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.lblSecOps.Margin = new System.Windows.Forms.Padding(12, 16, 4, 6);
+            this.lblSecOps.Margin = new System.Windows.Forms.Padding(12, 8, 4, 2);
             this.lblSecOps.Name = "lblSecOps";
             this.lblSecOps.Size = new System.Drawing.Size(120, 13);
             this.lblSecOps.Tag = "muted";
@@ -367,7 +367,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblSecFees.AutoSize = true;
             this.lblSecFees.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSecFees.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.lblSecFees.Margin = new System.Windows.Forms.Padding(12, 16, 4, 6);
+            this.lblSecFees.Margin = new System.Windows.Forms.Padding(12, 8, 4, 2);
             this.lblSecFees.Name = "lblSecFees";
             this.lblSecFees.Size = new System.Drawing.Size(120, 13);
             this.lblSecFees.Tag = "muted";
@@ -376,7 +376,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblSecExam.AutoSize = true;
             this.lblSecExam.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSecExam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.lblSecExam.Margin = new System.Windows.Forms.Padding(12, 16, 4, 6);
+            this.lblSecExam.Margin = new System.Windows.Forms.Padding(12, 8, 4, 2);
             this.lblSecExam.Name = "lblSecExam";
             this.lblSecExam.Size = new System.Drawing.Size(120, 13);
             this.lblSecExam.Tag = "muted";
@@ -385,7 +385,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblSecSystem.AutoSize = true;
             this.lblSecSystem.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSecSystem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.lblSecSystem.Margin = new System.Windows.Forms.Padding(12, 16, 4, 6);
+            this.lblSecSystem.Margin = new System.Windows.Forms.Padding(12, 8, 4, 2);
             this.lblSecSystem.Name = "lblSecSystem";
             this.lblSecSystem.Size = new System.Drawing.Size(120, 13);
             this.lblSecSystem.Tag = "muted";
@@ -393,7 +393,7 @@ namespace StudentManagement.Desktop.Forms
             //
             // navFlow
             //
-            this.navFlow.AutoScroll = true;
+            this.navFlow.AutoScroll = false;
             this.navFlow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(14)))), ((int)(((byte)(20)))));
             this.navFlow.Controls.Add(this.btnToggleSidebar);
             this.navFlow.Controls.Add(this.lblSecOps);
@@ -415,7 +415,7 @@ namespace StudentManagement.Desktop.Forms
             this.navFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.navFlow.Name = "navFlow";
             this.navFlow.Padding = new System.Windows.Forms.Padding(2);
-            this.navFlow.Size = new System.Drawing.Size(280, 600);
+            this.navFlow.Size = new System.Drawing.Size(300, 600);
             this.navFlow.TabIndex = 1;
             this.navFlow.Tag = "sidebar";
             this.navFlow.WrapContents = false;
@@ -428,7 +428,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlHeader.Controls.Add(this.lblSession);
             this.pnlHeader.Controls.Add(this.lblClock);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeader.Location = new System.Drawing.Point(300, 0);
+            this.pnlHeader.Location = new System.Drawing.Point(320, 0);
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Padding = new System.Windows.Forms.Padding(16, 8, 16, 8);
             this.pnlHeader.Size = new System.Drawing.Size(840, 64);
@@ -486,7 +486,7 @@ namespace StudentManagement.Desktop.Forms
             //
             this.pnlContentContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
             this.pnlContentContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContentContainer.Location = new System.Drawing.Point(300, 64);
+            this.pnlContentContainer.Location = new System.Drawing.Point(320, 64);
             this.pnlContentContainer.Name = "pnlContentContainer";
             this.pnlContentContainer.Padding = new System.Windows.Forms.Padding(8);
             this.pnlContentContainer.Size = new System.Drawing.Size(840, 614);
@@ -499,7 +499,7 @@ namespace StudentManagement.Desktop.Forms
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblDbStatus,
             this.lblSync});
-            this.statusBar.Location = new System.Drawing.Point(300, 678);
+            this.statusBar.Location = new System.Drawing.Point(320, 678);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(840, 22);
             this.statusBar.TabIndex = 3;
