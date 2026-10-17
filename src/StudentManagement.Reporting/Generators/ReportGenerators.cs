@@ -33,8 +33,7 @@ namespace StudentManagement.Reporting.Generators
     public static class ReceiptSpooler
     {
         /// <summary>
-        /// Prints money receipt on A4 landscape, left half only (cut vertical).
-        /// Right half stays blank so one A4 yields two receipt halves.
+        /// Prints money receipt on half A4 (portrait). Top half = receipt, bottom blank for cutting.
         /// </summary>
         public static string GeneratePdf(
             FeeCollectionResult receipt,
@@ -58,27 +57,27 @@ namespace StudentManagement.Reporting.Generators
             {
                 container.Page(page =>
                 {
-                    // A4 landscape — split vertically into two half-page receipts.
-                    page.Size(PageSizes.A4.Height, PageSizes.A4.Width);
+                    page.Size(PageSizes.A4);
+                    page.MarginHorizontal(20);
                     page.MarginVertical(16);
-                    page.MarginHorizontal(14);
                     page.DefaultTextStyle(PdfFonts.Body(9));
 
-                    page.Content().Row(sheet =>
+                    // Same half-A4 split as admit cards (top receipt, bottom blank).
+                    const float halfHeight = 396f;
+                    const float cutHeight = 18f;
+
+                    page.Content().Column(sheet =>
                     {
-                        // Left half: receipt
-                        sheet.RelativeItem().PaddingRight(6).Element(slot =>
+                        sheet.Item().Height(halfHeight).Element(slot =>
                             DrawHalfPageReceipt(slot, receipt, institutionName, campus, lines, method));
 
-                        // Vertical cut guide (no solid border)
-                        sheet.ConstantItem(16).AlignMiddle().AlignCenter()
-                            .RotateLeft()
-                            .Text("- - -  cut here  (half A4 landscape)  - - -")
-                            .FontSize(6)
+                        sheet.Item().Height(cutHeight).AlignMiddle().AlignCenter()
+                            .Text("- - -  cut here  (half A4)  - - -")
+                            .FontSize(7)
                             .FontColor(Colors.Grey.Darken1);
 
-                        // Right half: blank (single print — ready for a second receipt when batching later)
-                        sheet.RelativeItem().PaddingLeft(6);
+                        // Single print: bottom half blank, no border.
+                        sheet.Item().Height(halfHeight);
                     });
                 });
             }).GeneratePdf(path);
@@ -177,7 +176,7 @@ namespace StudentManagement.Reporting.Generators
                 });
 
                 col.Item().PaddingTop(10).AlignCenter()
-                    .Text("This is a computer-generated official money receipt.  ·  Half A4 landscape")
+                    .Text("This is a computer-generated official money receipt.  ·  Half A4")
                     .FontSize(6).FontColor(Colors.Grey.Darken1);
             });
         }
