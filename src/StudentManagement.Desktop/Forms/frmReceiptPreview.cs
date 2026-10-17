@@ -63,7 +63,7 @@ namespace StudentManagement.Desktop.Forms
         private void BuildPreview()
         {
             pnlReceiptHost.Controls.Clear();
-            lblCaption.Text = "Money Receipt Preview — review charges, then Print Copy";
+            lblCaption.Text = "Money Receipt Preview — prints half A4 landscape (cut vertical)";
 
             var card = CreateReceiptCard();
             pnlReceiptHost.Controls.Add(card);
@@ -84,10 +84,11 @@ namespace StudentManagement.Desktop.Forms
             int tableBodyH = Math.Max(rowH, lines.Count * rowH);
             int cardH = 280 + 40 + tableBodyH + 56 + 24;
 
+            // Preview roughly matches half of A4 landscape (left slot).
             var card = new Panel
             {
-                Width = 560,
-                Height = cardH,
+                Width = 620,
+                Height = Math.Max(cardH, 420),
                 BackColor = Color.White,
                 Margin = new Padding(16),
                 Padding = new Padding(28)
@@ -142,15 +143,18 @@ namespace StudentManagement.Desktop.Forms
             };
             card.Controls.Add(infoBox);
 
-            int iy = 12;
+            int iy = 10;
             AddInfoRow(infoBox, "Receipt No:", _receipt.ReceiptNo, Navy, 12, ref iy);
             AddInfoRow(infoBox, "Student Name:", _receipt.StudentName, Navy, 12, ref iy);
             AddInfoRow(infoBox, "Registration No:", _receipt.RegistrationNo, Navy, 12, ref iy);
-            AddInfoRow(infoBox, "Date & Time:", _receipt.PaymentDate.ToString("M/d/yyyy, h:mm:ss tt"), Muted, 12, ref iy, boldValue: false);
+            AddInfoRow(infoBox, "Date & Time:", _receipt.PaymentDate.ToString("dd-MMM-yyyy, h:mm tt"), Muted, 12, ref iy, boldValue: false);
             var method = string.IsNullOrWhiteSpace(_receipt.PaymentMethodDisplay)
                 ? _receipt.PaymentMethod.ToString()
                 : _receipt.PaymentMethodDisplay;
             AddInfoRow(infoBox, "Payment Method:", method, Muted, 12, ref iy, boldValue: false);
+            if (!string.IsNullOrWhiteSpace(_receipt.FeePeriods))
+                AddInfoRow(infoBox, "Fee Period:", _receipt.FeePeriods, Navy, 12, ref iy);
+            infoBox.Height = Math.Max(118, iy + 12);
             y += infoBox.Height + 18;
 
             // Fee table

@@ -33,7 +33,7 @@ namespace StudentManagement.BusinessLayer
                           ?? throw new InvalidOperationException("Student not found.");
 
             var periods = request.FeePeriods.Count > 0
-                ? string.Join(", ", request.FeePeriods)
+                ? FormatFeePeriodRange(request.FeePeriods)
                 : "Other Charges";
 
             var otherNote = otherFees.Count > 0
@@ -284,22 +284,25 @@ namespace StudentManagement.BusinessLayer
 
             if (request.TuitionAmount > 0 && request.FeePeriods.Count > 0)
             {
-                var unit = Math.Round(request.TuitionAmount / request.FeePeriods.Count, 2);
-                var remainder = request.TuitionAmount - (unit * request.FeePeriods.Count);
-                for (var i = 0; i < request.FeePeriods.Count; i++)
+                // One line for all selected months: "Tuition Fee (January - March 2026)" + total.
+                lines.Add(new ReceiptLineItemDto
                 {
-                    var amount = unit + (i == request.FeePeriods.Count - 1 ? remainder : 0);
-                    if (amount <= 0) continue;
-                    lines.Add(new ReceiptLineItemDto
-                    {
-                        Description = $"Tuition Fee ({FormatFeePeriod(request.FeePeriods[i])})",
-                        Amount = amount
-                    });
-                }
+                    Description = $"Tuition Fee ({FormatFeePeriodRange(request.FeePeriods)})",
+                    Amount = request.TuitionAmount
+                });
             }
 
             foreach (var fee in otherFees)
-                lines.Add(new ReceiptLineItemDto { Description = fee.Name.Trim(), Amount = fee.Amount });
+            {
+                var name = fee.Name.Trim();
+                // Transport already totals selected months; annotate period when months exist.
+                if (name.Equals("Monthly Transport Fee", StringComparison.OrdinalIgnoreCase)
+                    && request.FeePeriods.Count > 0)
+                {
+                    name = $"Monthly Transport Fee ({FormatFeePeriodRange(request.FeePeriods)})";
+                }
+                lines.Add(new ReceiptLineItemDto { Description = name, Amount = fee.Amount });
+            }
 
             if (request.FineAmount > 0)
                 lines.Add(new ReceiptLineItemDto { Description = "Late Fine / Penalty", Amount = request.FineAmount });
@@ -320,6 +323,43 @@ namespace StudentManagement.BusinessLayer
                     System.Globalization.DateTimeStyles.None, out var dt))
                 return dt.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
             return period.Trim();
+        }
+
+        /// <summary>
+        /// Collapses selected months into one label, e.g. "January - March 2026".
+        /// </summary>
+        public static string FormatFeePeriodRange(IEnumerable<string> periods)
+        {
+            var months = (periods ?? Enumerable.Empty<string>())
+                .Select(p =>
+                {
+                    if (DateTime.TryParseExact(
+                            (p ?? string.Empty).Trim(),
+                            "MMM-yyyy",
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            System.Globalization.DateTimeStyles.None,
+                            out var dt))
+                        return (DateTime?)dt;
+                    return null;
+                })
+                .Where(d => d.HasValue)
+                .Select(d => d!.Value)
+                .OrderBy(d => d)
+                .ToList();
+
+            if (months.Count == 0)
+                return string.Join(", ", periods ?? Enumerable.Empty<string>());
+            if (months.Count == 1)
+                return months[0].ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+            var first = months[0];
+            var last = months[months.Count - 1];
+            var culture = System.Globalization.CultureInfo.InvariantCulture;
+
+            if (first.Year == last.Year)
+                return $"{first.ToString("MMMM", culture)} - {last.ToString("MMMM yyyy", culture)}";
+
+            return $"{first.ToString("MMMM yyyy", culture)} - {last.ToString("MMMM yyyy", culture)}";
         }
 
         public static decimal CalculateNetPayable(decimal tuition, decimal fine, decimal waiver, decimal otherFees = 0)

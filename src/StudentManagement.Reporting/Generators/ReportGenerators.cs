@@ -32,6 +32,10 @@ namespace StudentManagement.Reporting.Generators
 
     public static class ReceiptSpooler
     {
+        /// <summary>
+        /// Prints money receipt on A4 landscape, left half only (cut vertical).
+        /// Right half stays blank so one A4 yields two receipt halves.
+        /// </summary>
         public static string GeneratePdf(
             FeeCollectionResult receipt,
             string institutionName,
@@ -54,95 +58,128 @@ namespace StudentManagement.Reporting.Generators
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A5);
-                    page.Margin(28);
-                    page.DefaultTextStyle(PdfFonts.Body(10));
+                    // A4 landscape — split vertically into two half-page receipts.
+                    page.Size(PageSizes.A4.Height, PageSizes.A4.Width);
+                    page.MarginVertical(16);
+                    page.MarginHorizontal(14);
+                    page.DefaultTextStyle(PdfFonts.Body(9));
 
-                    page.Header().Column(col =>
+                    page.Content().Row(sheet =>
                     {
-                        col.Item().AlignCenter().Text(institutionName.ToUpperInvariant())
-                            .Bold().FontSize(14).FontColor(Colors.BlueGrey.Darken4);
-                        col.Item().AlignCenter().Text(campus)
-                            .FontSize(9).FontColor(Colors.Grey.Darken1);
-                        col.Item().PaddingTop(8).AlignCenter().Text("OFFICIAL MONEY RECEIPT")
-                            .Bold().FontSize(12).FontColor(Colors.Blue.Medium);
+                        // Left half: receipt
+                        sheet.RelativeItem().PaddingRight(6).Element(slot =>
+                            DrawHalfPageReceipt(slot, receipt, institutionName, campus, lines, method));
+
+                        // Vertical cut guide (no solid border)
+                        sheet.ConstantItem(16).AlignMiddle().AlignCenter()
+                            .RotateLeft()
+                            .Text("- - -  cut here  (half A4 landscape)  - - -")
+                            .FontSize(6)
+                            .FontColor(Colors.Grey.Darken1);
+
+                        // Right half: blank (single print — ready for a second receipt when batching later)
+                        sheet.RelativeItem().PaddingLeft(6);
                     });
-
-                    page.Content().PaddingVertical(12).Column(col =>
-                    {
-                        col.Spacing(4);
-                        col.Item().Background(Colors.Grey.Lighten3).Padding(10).Column(info =>
-                        {
-                            info.Item().Text(t =>
-                            {
-                                t.Span("Receipt No: ").FontColor(Colors.Grey.Darken1);
-                                t.Span(receipt.ReceiptNo).Bold();
-                            });
-                            info.Item().Text(t =>
-                            {
-                                t.Span("Student Name: ").FontColor(Colors.Grey.Darken1);
-                                t.Span(receipt.StudentName).Bold();
-                            });
-                            info.Item().Text(t =>
-                            {
-                                t.Span("Registration No: ").FontColor(Colors.Grey.Darken1);
-                                t.Span(receipt.RegistrationNo).Bold();
-                            });
-                            info.Item().Text($"Date & Time: {receipt.PaymentDate:M/d/yyyy, h:mm:ss tt}")
-                                .FontColor(Colors.Grey.Darken1);
-                            info.Item().Text($"Payment Method: {method}")
-                                .FontColor(Colors.Grey.Darken1);
-                        });
-
-                        col.Item().PaddingTop(12).Table(table =>
-                        {
-                            table.ColumnsDefinition(c =>
-                            {
-                                c.RelativeColumn(3.2f);
-                                c.RelativeColumn(1.2f);
-                            });
-
-                            table.Header(h =>
-                            {
-                                h.Cell().Background(Colors.BlueGrey.Darken3).Padding(6)
-                                    .Text("DESCRIPTION").FontColor(Colors.White).Bold().FontSize(8);
-                                h.Cell().Background(Colors.BlueGrey.Darken3).Padding(6).AlignRight()
-                                    .Text("AMOUNT (৳)").FontColor(Colors.White).Bold().FontSize(8);
-                            });
-
-                            if (lines.Count == 0)
-                            {
-                                table.Cell().ColumnSpan(2).Padding(8)
-                                    .Text("No charge lines.").FontColor(Colors.Grey.Medium);
-                            }
-                            else
-                            {
-                                foreach (var item in lines)
-                                {
-                                    var bg = item.IsCredit ? Colors.Green.Lighten4 : Colors.White;
-                                    var fg = item.IsCredit ? Colors.Green.Darken3 : Colors.BlueGrey.Darken4;
-                                    table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                                        .Padding(6).Text(item.Description).FontColor(fg)
-                                        .Bold().FontSize(item.IsCredit ? 9 : 9);
-                                    table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
-                                        .Padding(6).AlignRight().Text($"৳ {item.Amount:N0}").FontColor(fg).Bold();
-                                }
-                            }
-
-                            table.Cell().BorderTop(1).BorderColor(Colors.BlueGrey.Darken2)
-                                .Padding(8).Text("Total Paid Amount").Bold();
-                            table.Cell().BorderTop(1).BorderColor(Colors.BlueGrey.Darken2)
-                                .Padding(8).AlignRight().Text($"৳ {receipt.AmountPaid:N0}").Bold().FontSize(11);
-                        });
-                    });
-
-                    page.Footer().AlignCenter()
-                        .Text("This is a computer-generated official money receipt.")
-                        .FontSize(8).FontColor(Colors.Grey.Darken1);
                 });
             }).GeneratePdf(path);
 
             return path;
+        }
+
+        private static void DrawHalfPageReceipt(
+            IContainer container,
+            FeeCollectionResult receipt,
+            string institutionName,
+            string campus,
+            List<ReceiptLineItemDto> lines,
+            string method)
+        {
+            container.Border(1).BorderColor(Colors.Grey.Lighten1).Background(Colors.White)
+                .Padding(12).Column(col =>
+            {
+                col.Item().AlignCenter().Text(institutionName.ToUpperInvariant())
+                    .Bold().FontSize(11).FontColor(Colors.BlueGrey.Darken4);
+                col.Item().AlignCenter().Text(campus)
+                    .FontSize(7).FontColor(Colors.Grey.Darken1);
+                col.Item().PaddingTop(4).AlignCenter().Text("OFFICIAL MONEY RECEIPT")
+                    .Bold().FontSize(10).FontColor(Colors.Blue.Medium);
+
+                col.Item().PaddingTop(8).Background(Colors.Grey.Lighten3).Padding(8).Column(info =>
+                {
+                    info.Spacing(2);
+                    info.Item().Text(t =>
+                    {
+                        t.Span("Receipt No: ").FontColor(Colors.Grey.Darken1).FontSize(8);
+                        t.Span(receipt.ReceiptNo).Bold().FontSize(8);
+                    });
+                    info.Item().Text(t =>
+                    {
+                        t.Span("Student Name: ").FontColor(Colors.Grey.Darken1).FontSize(8);
+                        t.Span(receipt.StudentName).Bold().FontSize(8);
+                    });
+                    info.Item().Text(t =>
+                    {
+                        t.Span("Registration No: ").FontColor(Colors.Grey.Darken1).FontSize(8);
+                        t.Span(receipt.RegistrationNo).Bold().FontSize(8);
+                    });
+                    info.Item().Text($"Date & Time: {receipt.PaymentDate:dd-MMM-yyyy, h:mm tt}")
+                        .FontColor(Colors.Grey.Darken1).FontSize(8);
+                    info.Item().Text($"Payment Method: {method}")
+                        .FontColor(Colors.Grey.Darken1).FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(receipt.FeePeriods))
+                    {
+                        info.Item().Text(t =>
+                        {
+                            t.Span("Fee Period: ").FontColor(Colors.Grey.Darken1).FontSize(8);
+                            t.Span(receipt.FeePeriods).Bold().FontSize(8);
+                        });
+                    }
+                });
+
+                col.Item().PaddingTop(8).Table(table =>
+                {
+                    table.ColumnsDefinition(c =>
+                    {
+                        c.RelativeColumn(3.2f);
+                        c.RelativeColumn(1.2f);
+                    });
+
+                    table.Header(h =>
+                    {
+                        h.Cell().Background(Colors.BlueGrey.Darken3).Padding(5)
+                            .Text("DESCRIPTION").FontColor(Colors.White).Bold().FontSize(7);
+                        h.Cell().Background(Colors.BlueGrey.Darken3).Padding(5).AlignRight()
+                            .Text("AMOUNT (৳)").FontColor(Colors.White).Bold().FontSize(7);
+                    });
+
+                    if (lines.Count == 0)
+                    {
+                        table.Cell().ColumnSpan(2).Padding(6)
+                            .Text("No charge lines.").FontColor(Colors.Grey.Medium).FontSize(8);
+                    }
+                    else
+                    {
+                        foreach (var item in lines)
+                        {
+                            var bg = item.IsCredit ? Colors.Green.Lighten4 : Colors.White;
+                            var fg = item.IsCredit ? Colors.Green.Darken3 : Colors.BlueGrey.Darken4;
+                            table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                                .Padding(5).Text(item.Description).FontColor(fg).Bold().FontSize(8);
+                            table.Cell().Background(bg).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2)
+                                .Padding(5).AlignRight().Text($"৳ {item.Amount:N0}").FontColor(fg).Bold().FontSize(8);
+                        }
+                    }
+
+                    table.Cell().BorderTop(1).BorderColor(Colors.BlueGrey.Darken2)
+                        .Padding(6).Text("Total Paid Amount").Bold().FontSize(9);
+                    table.Cell().BorderTop(1).BorderColor(Colors.BlueGrey.Darken2)
+                        .Padding(6).AlignRight().Text($"৳ {receipt.AmountPaid:N0}").Bold().FontSize(10);
+                });
+
+                col.Item().PaddingTop(10).AlignCenter()
+                    .Text("This is a computer-generated official money receipt.  ·  Half A4 landscape")
+                    .FontSize(6).FontColor(Colors.Grey.Darken1);
+            });
         }
     }
 
