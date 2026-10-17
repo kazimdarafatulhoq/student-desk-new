@@ -285,6 +285,12 @@ namespace StudentManagement.UserObjects.Objects
         public decimal TotalReceivables { get; set; }
         public int FeeCollectionRatePct { get; set; }
         public decimal CollectionsToday { get; set; }
+        public int ReceiptsToday { get; set; }
         public decimal CollectionsThisMonth { get; set; }
+        public int ClearedForExam { get; set; }
+        public int AdmitCardsIssued { get; set; }
+        public decimal TuitionInvoiced { get; set; }
+        public decimal IctInvoiced { get; set; }
+        public decimal ExamInvoiced { get; set; }
     }
 }

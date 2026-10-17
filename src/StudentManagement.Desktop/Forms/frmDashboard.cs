@@ -77,31 +77,28 @@ namespace StudentManagement.Desktop.Forms
 
             try
             {
-                var list = await Students.SearchAsync(new StudentSearchFilter { Status = StudentStatus.Active });
-                int total = list.Count;
-                int clear = list.Count(s => s.NetDue <= 0);
-                int withDues = list.Count(s => s.NetDue > 0);
-                decimal dues = list.Sum(s => s.NetDue);
-                decimal monthlyTuition = list.Sum(s => s.MonthlyTuitionFee);
+                // Live KPIs from usp_GetDashboardStats (FeePayments / ledger / students).
+                var stats = await Fees.GetDashboardStatsAsync();
 
-                lblStudents.Text = total.ToString("N0");
-                lblPaidHint.Text = clear.ToString("N0") + " Active Enrolled (clear)";
+                lblStudents.Text = stats.ActiveStudents.ToString("N0");
+                lblPaidHint.Text = stats.ClearStudents.ToString("N0") + " Active Enrolled (clear)";
 
-                decimal todayEstimate = Math.Round(monthlyTuition * 0.015m, 0);
-                int receiptEstimate = Math.Max(0, clear / 40);
-                lblCollection.Text = "৳ " + todayEstimate.ToString("N0");
-                lblCollectionHint.Text = receiptEstimate + " Counter Receipts";
+                lblCollection.Text = "৳ " + stats.CollectionsToday.ToString("N0");
+                lblCollectionHint.Text = stats.ReceiptsToday.ToString("N0") + " Counter Receipts";
 
-                lblDues.Text = "৳ " + dues.ToString("N0");
-                int rate = total > 0 ? (int)Math.Round(clear * 100.0 / total) : 0;
-                lblDueHint.Text = rate + "% Fee Collection Rate";
+                lblDues.Text = "৳ " + stats.TotalReceivables.ToString("N0");
+                lblDueHint.Text = stats.FeeCollectionRatePct + "% Fee Collection Rate";
 
-                lblEligible.Text = clear.ToString("N0") + " / " + total.ToString("N0");
-                lblEligibleHint.Text = withDues + " Students Dues Pending";
+                lblEligible.Text = stats.ClearStudents.ToString("N0") + " / " + stats.ActiveStudents.ToString("N0");
+                lblEligibleHint.Text = stats.StudentsWithDues + " Students Dues Pending";
 
-                SetBar(barTuition, lblPctTuition, lblBarTuition, "1. Tuition Fees", Math.Max(rate, 70), UITheme.Success);
-                SetBar(barIct, lblPctIct, lblBarIct, "2. ICT & Computer Lab Fees", Math.Max(rate - 2, 65), UITheme.AccentCyan);
-                SetBar(barExam, lblPctExam, lblBarExam, "3. Term Examination Fees", Math.Max(rate + 4, 75), UITheme.AccentPurple);
+                decimal categoryTotal = stats.TuitionInvoiced + stats.IctInvoiced + stats.ExamInvoiced;
+                SetBar(barTuition, lblPctTuition, lblBarTuition, "1. Tuition Fees",
+                    SharePct(stats.TuitionInvoiced, categoryTotal), UITheme.Success);
+                SetBar(barIct, lblPctIct, lblBarIct, "2. ICT & Computer Lab Fees",
+                    SharePct(stats.IctInvoiced, categoryTotal), UITheme.AccentCyan);
+                SetBar(barExam, lblPctExam, lblBarExam, "3. Term Examination Fees",
+                    SharePct(stats.ExamInvoiced, categoryTotal), UITheme.AccentPurple);
                 LayoutDashboard();
             }
             catch (Exception ex)
@@ -112,6 +109,12 @@ namespace StudentManagement.Desktop.Forms
                 lblEligible.Text = "—";
                 lblPaidHint.Text = ex.Message;
             }
+        }
+
+        private static int SharePct(decimal part, decimal total)
+        {
+            if (total <= 0m) return 0;
+            return (int)Math.Round(part * 100m / total);
         }
 
         protected override void OnShown(EventArgs e)

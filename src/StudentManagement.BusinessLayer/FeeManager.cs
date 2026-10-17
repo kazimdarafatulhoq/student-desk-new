@@ -249,15 +249,36 @@ namespace StudentManagement.BusinessLayer
                 var students = OfflineStore.Instance.Students.Where(s => s.Status == StudentStatus.Active).ToList();
                 var clear = students.Count(s => s.NetDue <= 0);
                 var withDues = students.Count(s => s.NetDue > 0);
+                var today = DateTime.Today;
+                var monthStart = new DateTime(today.Year, today.Month, 1);
+                var payments = OfflineStore.Instance.Payments;
+                var todayPayments = payments.Where(p => p.PaymentDate.Date == today).ToList();
+                var monthPayments = payments.Where(p => p.PaymentDate.Date >= monthStart).ToList();
+                var tuitionInv = OfflineStore.Instance.Ledger
+                    .Where(l => l.DebitAmount > 0 && (l.Particulars ?? "").IndexOf("Tuition", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Sum(l => l.DebitAmount);
+                var ictInv = OfflineStore.Instance.Ledger
+                    .Where(l => l.DebitAmount > 0 && (l.Particulars ?? "").IndexOf("ICT", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Sum(l => l.DebitAmount);
+                var examInv = OfflineStore.Instance.Ledger
+                    .Where(l => l.DebitAmount > 0 && (l.Particulars ?? "").IndexOf("Exam", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .Sum(l => l.DebitAmount);
+
                 return new DashboardStats
                 {
                     ActiveStudents = students.Count,
                     ClearStudents = clear,
                     StudentsWithDues = withDues,
-                    TotalReceivables = students.Sum(s => s.NetDue),
+                    TotalReceivables = students.Where(s => s.NetDue > 0).Sum(s => s.NetDue),
                     FeeCollectionRatePct = students.Count == 0 ? 0 : (int)Math.Round(clear * 100.0 / students.Count),
-                    CollectionsToday = 0,
-                    CollectionsThisMonth = 0
+                    CollectionsToday = todayPayments.Sum(p => p.AmountPaid),
+                    ReceiptsToday = todayPayments.Count,
+                    CollectionsThisMonth = monthPayments.Sum(p => p.AmountPaid),
+                    ClearedForExam = clear,
+                    AdmitCardsIssued = 0,
+                    TuitionInvoiced = tuitionInv,
+                    IctInvoiced = ictInv,
+                    ExamInvoiced = examInv
                 };
             }
 
@@ -266,15 +287,27 @@ namespace StudentManagement.BusinessLayer
             var r = dt.Rows[0];
             return new DashboardStats
             {
-                ActiveStudents = Convert.ToInt32(r["ActiveStudents"]),
-                ClearStudents = Convert.ToInt32(r["ClearStudents"]),
-                StudentsWithDues = Convert.ToInt32(r["StudentsWithDues"]),
-                TotalReceivables = Convert.ToDecimal(r["TotalReceivables"]),
-                FeeCollectionRatePct = Convert.ToInt32(r["FeeCollectionRatePct"]),
-                CollectionsToday = Convert.ToDecimal(r["CollectionsToday"]),
-                CollectionsThisMonth = Convert.ToDecimal(r["CollectionsThisMonth"])
+                ActiveStudents = ColInt(r, "ActiveStudents"),
+                ClearStudents = ColInt(r, "ClearStudents"),
+                StudentsWithDues = ColInt(r, "StudentsWithDues"),
+                TotalReceivables = ColDec(r, "TotalReceivables"),
+                FeeCollectionRatePct = ColInt(r, "FeeCollectionRatePct"),
+                CollectionsToday = ColDec(r, "CollectionsToday"),
+                ReceiptsToday = ColInt(r, "ReceiptsToday"),
+                CollectionsThisMonth = ColDec(r, "CollectionsThisMonth"),
+                ClearedForExam = ColInt(r, "ClearedForExam"),
+                AdmitCardsIssued = ColInt(r, "AdmitCardsIssued"),
+                TuitionInvoiced = ColDec(r, "TuitionInvoiced"),
+                IctInvoiced = ColDec(r, "IctInvoiced"),
+                ExamInvoiced = ColDec(r, "ExamInvoiced")
             };
         }
+
+        private static int ColInt(DataRow r, string col) =>
+            r.Table.Columns.Contains(col) && r[col] != DBNull.Value ? Convert.ToInt32(r[col]) : 0;
+
+        private static decimal ColDec(DataRow r, string col) =>
+            r.Table.Columns.Contains(col) && r[col] != DBNull.Value ? Convert.ToDecimal(r[col]) : 0m;
 
         public static List<ReceiptLineItemDto> BuildReceiptLines(FeeCollectionRequest request, List<NamedFeeAmount>? otherFees = null)
         {
@@ -442,6 +475,8 @@ namespace StudentManagement.BusinessLayer
             => System.Threading.Tasks.Task.FromResult(GetSummary(studentId));
         public System.Threading.Tasks.Task<System.Collections.Generic.List<LedgerEntryDto>> GetLedgerDetailedAsync(int studentId, System.Threading.CancellationToken ct = default)
             => System.Threading.Tasks.Task.FromResult(GetLedgerDetailed(studentId));
+        public System.Threading.Tasks.Task<DashboardStats> GetDashboardStatsAsync(System.Threading.CancellationToken ct = default)
+            => System.Threading.Tasks.Task.FromResult(GetDashboardStats());
 
     }
 }
