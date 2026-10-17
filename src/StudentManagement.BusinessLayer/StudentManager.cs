@@ -232,6 +232,8 @@ namespace StudentManagement.BusinessLayer
             if (string.IsNullOrWhiteSpace(request.RollNumber)) throw new ArgumentException("Roll number is required.");
             if (request.MonthlyTuitionFee < 0) throw new ArgumentException("Tuition fee cannot be negative.");
             if (request.DateOfBirth.Date >= DateTime.Today) throw new ArgumentException("Date of birth must be in the past.");
+            if (string.IsNullOrWhiteSpace(request.PhotoPath))
+                throw new ArgumentException("Student photo is required. Please upload a photo before completing admission.");
         }
 
         private static List<StudentDto> MapStudents(DataTable dt)

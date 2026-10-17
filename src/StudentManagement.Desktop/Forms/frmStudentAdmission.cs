@@ -299,14 +299,33 @@ namespace StudentManagement.Desktop.Forms
                 old.Dispose();
             }
             _selectedPhotoPath = null;
-            lblPhotoHint.Text = "No photo selected";
-            lblPhotoHint.ForeColor = UITheme.TextMuted;
+            lblPhotoHint.Text = "Photo required — upload";
+            lblPhotoHint.ForeColor = UITheme.Danger;
         }
 
-        private string? SavePhotoForStudent(string registrationNo)
+        private bool HasPhotoSelected()
+            => !string.IsNullOrWhiteSpace(_selectedPhotoPath) && File.Exists(_selectedPhotoPath);
+
+        private bool HasExistingPhoto()
+            => !string.IsNullOrWhiteSpace(_existingPhotoPath) && File.Exists(_existingPhotoPath);
+
+        private void EnsurePhotoRequired()
+        {
+            if (IsEditMode)
+            {
+                if (HasPhotoSelected() || HasExistingPhoto())
+                    return;
+                throw new ArgumentException("Student photo is required. Please upload a photo before saving.");
+            }
+
+            if (!HasPhotoSelected())
+                throw new ArgumentException("Student photo is required. Please upload a photo before completing admission.");
+        }
+
+        private string SavePhotoForStudent(string registrationNo)
         {
             if (string.IsNullOrWhiteSpace(_selectedPhotoPath) || !File.Exists(_selectedPhotoPath))
-                return null;
+                throw new ArgumentException("Student photo is required. Please upload a valid image file.");
 
             string photosRoot = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -333,6 +352,8 @@ namespace StudentManagement.Desktop.Forms
                 btnSave.Enabled = false;
                 if (chkSameAddress.Checked)
                     txtPermanentAddress.Text = txtPresentAddress.Text;
+
+                EnsurePhotoRequired();
 
                 if (!decimal.TryParse(txtTuitionFee.Text.Trim(), out var tuition))
                     throw new ArgumentException("Monthly tuition fee must be a valid number.");
@@ -375,17 +396,14 @@ namespace StudentManagement.Desktop.Forms
                 PhotoPath = _selectedPhotoPath
             });
 
-            string? savedPhoto = SavePhotoForStudent(result.RegistrationNo);
-            if (!string.IsNullOrEmpty(savedPhoto))
-            {
-                result.PhotoPath = savedPhoto;
-                try { await Students.UpdateAsync(result, AppSession.Current?.Username); }
-                catch { /* offline may skip */ }
-            }
+            string savedPhoto = SavePhotoForStudent(result.RegistrationNo);
+            result.PhotoPath = savedPhoto;
+            try { await Students.UpdateAsync(result, AppSession.Current?.Username); }
+            catch { /* offline may skip path rewrite */ }
 
             MessageBox.Show(
                 "Student admitted successfully.\nRegistration ID: " + result.RegistrationNo +
-                (string.IsNullOrEmpty(savedPhoto) ? string.Empty : "\nPhoto saved."),
+                "\nPhoto saved.",
                 "Admission Saved",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -396,9 +414,8 @@ namespace StudentManagement.Desktop.Forms
         {
             string regNo = txtRegNo.Text.Trim();
             string? photo = _existingPhotoPath;
-            string? saved = SavePhotoForStudent(regNo);
-            if (!string.IsNullOrEmpty(saved))
-                photo = saved;
+            if (HasPhotoSelected())
+                photo = SavePhotoForStudent(regNo);
 
             var dto = new StudentDto
             {

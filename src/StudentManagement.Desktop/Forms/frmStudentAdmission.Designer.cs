@@ -156,7 +156,7 @@ namespace StudentManagement.Desktop.Forms
             this.grpPhoto.Size = new System.Drawing.Size(220, 280);
             this.grpPhoto.TabIndex = 2;
             this.grpPhoto.TabStop = false;
-            this.grpPhoto.Text = "STUDENT PHOTO";
+            this.grpPhoto.Text = "STUDENT PHOTO *";
             //
             // picStudent
             //
@@ -175,10 +175,10 @@ namespace StudentManagement.Desktop.Forms
             this.lblPhotoHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
             this.lblPhotoHint.Location = new System.Drawing.Point(20, 215);
             this.lblPhotoHint.Name = "lblPhotoHint";
-            this.lblPhotoHint.Size = new System.Drawing.Size(100, 15);
+            this.lblPhotoHint.Size = new System.Drawing.Size(148, 15);
             this.lblPhotoHint.TabIndex = 1;
             this.lblPhotoHint.Tag = "muted";
-            this.lblPhotoHint.Text = "No photo selected";
+            this.lblPhotoHint.Text = "Photo required — upload";
             //
             // btnBrowsePhoto
             //
@@ -186,7 +186,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnBrowsePhoto.Name = "btnBrowsePhoto";
             this.btnBrowsePhoto.Size = new System.Drawing.Size(110, 32);
             this.btnBrowsePhoto.TabIndex = 2;
-            this.btnBrowsePhoto.Text = "Upload Photo";
+            this.btnBrowsePhoto.Text = "Upload Photo *";
             this.btnBrowsePhoto.Click += new System.EventHandler(this.btnBrowsePhoto_Click);
             //
             // btnClearPhoto
