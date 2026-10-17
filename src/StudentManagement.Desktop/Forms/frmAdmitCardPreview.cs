@@ -56,8 +56,8 @@ namespace StudentManagement.Desktop.Forms
         {
             flpCards.Controls.Clear();
             lblCaption.Text = _cards.Count <= 1
-                ? "Single Admit Card Preview"
-                : $"Bulk Admit Card Preview ({_cards.Count} cards)";
+                ? "Admit Card Preview — prints as half A4 (2 cards / page)"
+                : $"Bulk Admit Card Preview ({_cards.Count} cards) — half A4, 2 per page";
 
             foreach (var card in _cards)
             {
@@ -70,13 +70,14 @@ namespace StudentManagement.Desktop.Forms
 
         private Panel CreateCardPanel(AdmitCardDto card)
         {
+            // Rough half-A4 proportion for on-screen preview (print PDF is exact half A4).
             var cardPanel = new Panel
             {
-                Width = 720,
-                Height = 520,
+                Width = 700,
+                Height = 460,
                 BackColor = Color.White,
                 Margin = new Padding(16, 8, 16, 16),
-                Padding = new Padding(24)
+                Padding = new Padding(20)
             };
             cardPanel.Paint += (s, e) =>
             {
