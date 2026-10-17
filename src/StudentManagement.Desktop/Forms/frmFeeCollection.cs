@@ -30,8 +30,22 @@ namespace StudentManagement.Desktop.Forms
             if (DesignTime.IsActive)
                 return;
             UITheme.ApplyForm(this);
+            BindPaymentMethods();
             BuildMonthMatrix();
             WireOptionalFeeEvents();
+        }
+
+        private void BindPaymentMethods()
+        {
+            var methods = Enum.GetValues(typeof(PaymentMethod))
+                .Cast<PaymentMethod>()
+                .Select(m => new KeyValuePair<PaymentMethod, string>(m, EnumDisplay.PaymentMethodLabel(m)))
+                .ToList();
+            cboPaymentMethod.DisplayMember = "Value";
+            cboPaymentMethod.ValueMember = "Key";
+            cboPaymentMethod.DataSource = methods;
+            if (cboPaymentMethod.Items.Count > 0)
+                cboPaymentMethod.SelectedIndex = 0;
         }
 
         private void WireOptionalFeeEvents()
@@ -231,7 +245,9 @@ namespace StudentManagement.Desktop.Forms
                     FineAmount = fine,
                     WaiverAmount = waiver,
                     OtherFees = otherFees,
-                    PaymentMethod = (PaymentMethod)cboPaymentMethod.SelectedItem!,
+                    PaymentMethod = cboPaymentMethod.SelectedValue is PaymentMethod pm
+                        ? pm
+                        : PaymentMethod.Cash,
                     TransactionRef = txtTxnRef.Text.Trim(),
                     Remarks = txtRemarks.Text.Trim(),
                     CollectedByUserId = AppSession.Current?.UserId ?? 0
