@@ -305,15 +305,10 @@ namespace StudentManagement.Reporting.Generators
                             sheet.Item().Height(halfHeight).Element(slot =>
                                 DrawHalfPageCard(slot, first, institutionName, campus));
 
-                            sheet.Item().Height(cutHeight).Column(cut =>
-                            {
-                                cut.Item().Height(0.6f).Background(Colors.Grey.Medium);
-                                cut.Item().AlignCenter()
-                                    .Text("- - -  cut here  (half A4)  - - -")
-                                    .FontSize(7)
-                                    .FontColor(Colors.Grey.Darken1);
-                                cut.Item().Height(0.6f).Background(Colors.Grey.Medium);
-                            });
+                            sheet.Item().Height(cutHeight).AlignMiddle().AlignCenter()
+                                .Text("- - -  cut here  (half A4)  - - -")
+                                .FontSize(7)
+                                .FontColor(Colors.Grey.Darken1);
 
                             sheet.Item().Height(halfHeight).Element(slot =>
                             {
