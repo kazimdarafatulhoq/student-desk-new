@@ -259,12 +259,8 @@ namespace StudentManagement.Desktop.Forms
                     preview.ShowDialog(FindForm());
                 }
 
-                _student = await Students.GetByIdAsync(_student.StudentId);
-                if (_student is not null)
-                {
-                    lblBioDue.Text = $"Net Due: ৳ {_student.NetDue:N2}";
-                    lblBioDue.ForeColor = _student.NetDue > 0 ? UITheme.Danger : UITheme.Success;
-                }
+                // After collect + receipt, clear the form for the next payment.
+                ClearFormAfterCollect();
             }
             catch (Exception ex)
             {
@@ -274,6 +270,36 @@ namespace StudentManagement.Desktop.Forms
             {
                 btnCollect.Enabled = true;
             }
+        }
+
+        private void ClearFormAfterCollect()
+        {
+            txtSearch.Clear();
+            ClearBio();
+
+            foreach (var chk in _monthChecks)
+                chk.Checked = false;
+
+            foreach (var box in GetOptionalFeeBoxes())
+            {
+                box.ReadOnly = false;
+                box.Text = "0";
+            }
+
+            txtTuitionUnit.Clear();
+            txtFine.Text = "0";
+            txtWaiver.Text = "0";
+            txtTxnRef.Clear();
+            txtRemarks.Clear();
+
+            if (cboPaymentMethod.Items.Count > 0)
+                cboPaymentMethod.SelectedIndex = 0;
+
+            lblTuitionTotal.Text = "Tuition: ৳ 0.00";
+            lblNetPayable.Text = "৳ 0.00";
+            lblNetPayable.ForeColor = UITheme.TextMuted;
+
+            txtSearch.Focus();
         }
     }
 }
