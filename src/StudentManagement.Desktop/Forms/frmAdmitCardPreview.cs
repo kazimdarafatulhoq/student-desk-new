@@ -196,12 +196,13 @@ namespace StudentManagement.Desktop.Forms
             int leftSigX = 80;
             int rightSigX = cardPanel.Width - 80 - sigWidth;
 
-            var sigTeacher = MakeLabel("_______________________\nClass Teacher", 8, FontStyle.Regular, Muted, true);
+            // Both signatures use the same style (Principal & Controller look).
+            var sigTeacher = MakeLabel("_______________________\nClass Teacher", 9, FontStyle.Bold, Navy, true);
             sigTeacher.Location = new Point(leftSigX, sigTop);
             sigTeacher.Size = new Size(sigWidth, sigHeight);
             cardPanel.Controls.Add(sigTeacher);
 
-            var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 8, FontStyle.Regular, Muted, true);
+            var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 9, FontStyle.Bold, Navy, true);
             sigPrincipal.Location = new Point(rightSigX, sigTop);
             sigPrincipal.Size = new Size(sigWidth, sigHeight);
             cardPanel.Controls.Add(sigPrincipal);

@@ -413,13 +413,15 @@ namespace StudentManagement.Reporting.Generators
 
         private static void DrawSignatureColumn(IContainer container, string label)
         {
+            // Same style for every signature (Principal & Controller look).
             container.AlignCenter().Column(c =>
             {
-                c.Item().Width(140).BorderBottom(1).BorderColor(Colors.Grey.Darken1);
+                c.Item().Width(140).BorderBottom(1).BorderColor(Colors.BlueGrey.Darken4);
                 c.Item().PaddingTop(3).AlignCenter()
                     .Text(label)
+                    .Bold()
                     .FontSize(8)
-                    .FontColor(Colors.Grey.Darken1);
+                    .FontColor(Colors.BlueGrey.Darken4);
             });
         }
 
