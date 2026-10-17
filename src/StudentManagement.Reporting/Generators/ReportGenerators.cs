@@ -309,7 +309,7 @@ namespace StudentManagement.Reporting.Generators
                             {
                                 cut.Item().Height(0.6f).Background(Colors.Grey.Medium);
                                 cut.Item().AlignCenter()
-                                    .Text("✂  cut here  —  half A4 admit card")
+                                    .Text("- - -  cut here  (half A4)  - - -")
                                     .FontSize(7)
                                     .FontColor(Colors.Grey.Darken1);
                                 cut.Item().Height(0.6f).Background(Colors.Grey.Medium);
