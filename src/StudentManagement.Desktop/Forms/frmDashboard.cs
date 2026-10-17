@@ -15,8 +15,6 @@ namespace StudentManagement.Desktop.Forms
     [DesignerCategory("Form")]
     public partial class frmDashboard : Form
     {
-        private StudentManager? _students;
-        private StudentManager Students => _students ??= new StudentManager();
         private FeeManager? _fees;
         private FeeManager Fees => _fees ??= new FeeManager();
 
