@@ -161,8 +161,8 @@ namespace StudentManagement.Desktop.Forms
         }
 
         /// <summary>
-        /// When transport is Active, auto-fill Monthly Transport Fee for selected months
-        /// that fall after the activation month (billing starts next month).
+        /// When transport is Active, auto-fill Monthly Transport Fee box from selected months
+        /// (only months after the activation month count).
         /// </summary>
         private void ApplyAutoTransportFee()
         {
@@ -172,12 +172,18 @@ namespace StudentManagement.Desktop.Forms
                 return;
             }
 
-            var periods = _monthChecks.Where(c => c.Checked).Select(c => c.Text);
+            var periods = _monthChecks.Where(c => c.Checked).Select(c => c.Text).ToList();
             var auto = FeeManager.CalculateAutoTransportFee(_student, periods);
-            var text = auto > 0 ? auto.ToString("0.##") : "0";
+            var text = auto.ToString("0.##");
             if (!string.Equals(txtTransportFee.Text, text, StringComparison.Ordinal))
                 txtTransportFee.Text = text;
             txtTransportFee.ReadOnly = true;
+
+            var billable = FeeManager.CountBillableTransportMonths(
+                periods, _student.TransportActive, _student.TransportActivatedOn);
+            txtTransportFee.Tag = billable > 0
+                ? $"Auto: {_student.MonthlyTransportFee:0.##} × {billable} month(s)"
+                : "Transport bills from the month after activation — select later months.";
         }
 
         private void Recalc()
@@ -200,19 +206,10 @@ namespace StudentManagement.Desktop.Forms
             var tuition = unit * months;
             var net = FeeManager.CalculateNetPayable(tuition, fine, waiver, otherTotal);
 
-            var transportMonths = FeeManager.CountBillableTransportMonths(
-                _monthChecks.Where(c => c.Checked).Select(c => c.Text),
-                _student.TransportActive,
-                _student.TransportActivatedOn);
-            var transportNote = _student.TransportActive && transportMonths > 0
-                ? $"  ·  Transport ×{transportMonths}: ৳ {_student.MonthlyTransportFee * transportMonths:N2}"
-                : (_student.TransportActive
-                    ? "  ·  Transport: starts next month after activation"
-                    : string.Empty);
-
+            // Keep summary short (no transport note here — amount lives in Monthly Transport Fee box).
             lblTuitionTotal.Text = otherTotal > 0
-                ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}{transportNote}"
-                : $"Tuition: ৳ {tuition:N2}{transportNote}";
+                ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}"
+                : $"Tuition: ৳ {tuition:N2}";
             lblNetPayable.Text = $"৳ {net:N2}";
             lblNetPayable.ForeColor = net > 0 ? UITheme.Success : UITheme.TextMuted;
         }
