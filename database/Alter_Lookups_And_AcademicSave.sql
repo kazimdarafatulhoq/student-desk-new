@@ -86,5 +86,45 @@ BEGIN
 END
 GO
 
-PRINT N'BloodGroups / PaymentMethods ready.';
+/* ---------- UserRoles ---------- */
+IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.UserRoles
+    (
+        UserRoleId  INT NOT NULL CONSTRAINT PK_UserRoles PRIMARY KEY,
+        Name        NVARCHAR(50) NOT NULL,
+        Code        NVARCHAR(30) NOT NULL,
+        SortOrder   INT NOT NULL CONSTRAINT DF_UserRoles_SortOrder DEFAULT (0),
+        IsActive    BIT NOT NULL CONSTRAINT DF_UserRoles_IsActive DEFAULT (1),
+        CreatedAt   DATETIME2 NOT NULL CONSTRAINT DF_UserRoles_CreatedAt DEFAULT (SYSUTCDATETIME()),
+        CreatedBy   NVARCHAR(100) NULL,
+        UpdatedAt   DATETIME2 NULL,
+        UpdatedBy   NVARCHAR(100) NULL,
+        IsDeleted   BIT NOT NULL CONSTRAINT DF_UserRoles_IsDeleted DEFAULT (0),
+        CONSTRAINT UQ_UserRoles_Code UNIQUE (Code)
+    );
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM dbo.UserRoles)
+BEGIN
+    INSERT INTO dbo.UserRoles (UserRoleId, Name, Code, SortOrder, CreatedBy) VALUES
+    (1, N'Super Admin',        N'SuperAdmin',        1, N'seed'),
+    (2, N'Accounts Manager',   N'AccountsManager',   2, N'seed'),
+    (3, N'Admission Officer',  N'AdmissionOfficer',  3, N'seed'),
+    (4, N'Teacher',            N'Teacher',           4, N'seed');
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Users_UserRoles')
+BEGIN
+    BEGIN TRY
+        ALTER TABLE dbo.Users WITH NOCHECK
+        ADD CONSTRAINT FK_Users_UserRoles
+            FOREIGN KEY (Role) REFERENCES dbo.UserRoles(UserRoleId);
+    END TRY BEGIN CATCH END CATCH
+END
+GO
+
+PRINT N'BloodGroups / PaymentMethods / UserRoles ready.';
 GO

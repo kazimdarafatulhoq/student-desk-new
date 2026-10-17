@@ -56,5 +56,14 @@ namespace StudentManagement.UserObjects.Enums
             PaymentMethod.BankTransfer => "Bank Transfer",
             _ => value.ToString()
         };
+
+        public static string UserRoleLabel(UserRole value) => value switch
+        {
+            UserRole.SuperAdmin => "Super Admin",
+            UserRole.AccountsManager => "Accounts Manager",
+            UserRole.AdmissionOfficer => "Admission Officer",
+            UserRole.Teacher => "Teacher",
+            _ => value.ToString()
+        };
     }
 }

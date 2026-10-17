@@ -112,6 +112,15 @@ namespace StudentManagement.UserObjects.Objects
         public bool IsActive { get; set; } = true;
     }
 
+    public class UserRoleDto
+    {
+        public int UserRoleId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public int SortOrder { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
     public class LedgerSummaryDto
     {
         public int StudentId { get; set; }
@@ -188,6 +197,7 @@ namespace StudentManagement.UserObjects.Objects
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public UserRole Role { get; set; }
+        public string RoleName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime? LastLoginAt { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
@@ -216,6 +226,7 @@ namespace StudentManagement.UserObjects.Objects
         public string Username { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public UserRole Role { get; set; }
+        public string RoleName { get; set; } = string.Empty;
         public string AcademicSession { get; set; } = "2025-2026";
         public DateTime LoginAt { get; set; } = DateTime.Now;
     }

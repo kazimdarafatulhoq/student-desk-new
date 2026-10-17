@@ -21,6 +21,11 @@ namespace StudentManagement.Desktop.Helpers
 
         public static void Clear() => Current = null;
 
-        public static string RoleDisplay => Current != null ? Current.Role.ToString() : "Guest";
+        public static string RoleDisplay =>
+            Current == null
+                ? "Guest"
+                : (!string.IsNullOrWhiteSpace(Current.RoleName)
+                    ? Current.RoleName
+                    : Current.Role.ToString());
     }
 }

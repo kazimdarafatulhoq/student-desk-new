@@ -38,6 +38,7 @@ namespace StudentManagement.BusinessLayer
                     Username = user.Username,
                     FullName = user.FullName,
                     Role = user.Role,
+                    RoleName = ResolveRoleName(user.Role),
                     AcademicSession = "2025-2026",
                     LoginAt = DateTime.Now
                 };
@@ -56,6 +57,7 @@ namespace StudentManagement.BusinessLayer
                 throw new UnauthorizedAccessException("Invalid username or password.");
 
             var userId = Convert.ToInt32(row["UserId"]);
+            var role = (UserRole)Convert.ToInt32(row["Role"]);
             new tblUser().UpdateLastLogin(userId);
 
             return new AuthSession
@@ -63,10 +65,43 @@ namespace StudentManagement.BusinessLayer
                 UserId = userId,
                 Username = Convert.ToString(row["Username"]) ?? "",
                 FullName = Convert.ToString(row["FullName"]) ?? "",
-                Role = (UserRole)Convert.ToInt32(row["Role"]),
+                Role = role,
+                RoleName = ResolveRoleName(role),
                 AcademicSession = "2025-2026",
                 LoginAt = DateTime.Now
             };
+        }
+
+        public List<UserRoleDto> GetUserRoles()
+        {
+            if (DbConfig.OfflineMode)
+                return OfflineStore.Instance.UserRoles.Where(r => r.IsActive).OrderBy(r => r.SortOrder).ToList();
+
+            return new tblUser().GetUserRoles().AsEnumerable().Select(r => new UserRoleDto
+            {
+                UserRoleId = Convert.ToInt32(r["UserRoleId"]),
+                Name = Convert.ToString(r["Name"]) ?? string.Empty,
+                Code = Convert.ToString(r["Code"]) ?? string.Empty,
+                SortOrder = r.Table.Columns.Contains("SortOrder") && r["SortOrder"] != DBNull.Value
+                    ? Convert.ToInt32(r["SortOrder"]) : 0,
+                IsActive = !r.Table.Columns.Contains("IsActive") || r["IsActive"] == DBNull.Value || Convert.ToBoolean(r["IsActive"])
+            }).ToList();
+        }
+
+        public string ResolveRoleName(UserRole role)
+        {
+            try
+            {
+                var match = GetUserRoles().FirstOrDefault(r => r.UserRoleId == (int)role);
+                if (match != null && !string.IsNullOrWhiteSpace(match.Name))
+                    return match.Name;
+            }
+            catch
+            {
+                // Fall back to enum label if lookup table is unavailable.
+            }
+
+            return EnumDisplay.UserRoleLabel(role);
         }
 
         public UserAccountDto CreateUser(CreateUserRequest request)
@@ -88,6 +123,7 @@ namespace StudentManagement.BusinessLayer
                     Email = request.Email,
                     Phone = request.Phone,
                     Role = request.Role,
+                    RoleName = ResolveRoleName(request.Role),
                     IsActive = true,
                     PasswordHash = PasswordHasher.Hash(request.Password)
                 };
@@ -118,22 +154,31 @@ namespace StudentManagement.BusinessLayer
                     Email = u.Email,
                     Phone = u.Phone,
                     Role = u.Role,
+                    RoleName = string.IsNullOrWhiteSpace(u.RoleName) ? ResolveRoleName(u.Role) : u.RoleName,
                     IsActive = u.IsActive,
                     LastLoginAt = u.LastLoginAt
                 }).ToList();
 
             var dt = new tblUser().GetAll();
-            return dt.AsEnumerable().Select(r => new UserAccountDto
+            return dt.AsEnumerable().Select(r =>
             {
-                UserId = Convert.ToInt32(r["UserId"]),
-                Username = Convert.ToString(r["Username"]) ?? "",
-                FullName = Convert.ToString(r["FullName"]) ?? "",
-                Email = r.Table.Columns.Contains("Email") ? Convert.ToString(r["Email"]) : null,
-                Phone = r.Table.Columns.Contains("Phone") ? Convert.ToString(r["Phone"]) : null,
-                Role = (UserRole)Convert.ToInt32(r["Role"]),
-                IsActive = Convert.ToBoolean(r["IsActive"]),
-                LastLoginAt = r.Table.Columns.Contains("LastLoginAt") && r["LastLoginAt"] != DBNull.Value
-                    ? Convert.ToDateTime(r["LastLoginAt"]) : null
+                var role = (UserRole)Convert.ToInt32(r["Role"]);
+                var roleName = r.Table.Columns.Contains("RoleName")
+                    ? Convert.ToString(r["RoleName"])
+                    : null;
+                return new UserAccountDto
+                {
+                    UserId = Convert.ToInt32(r["UserId"]),
+                    Username = Convert.ToString(r["Username"]) ?? "",
+                    FullName = Convert.ToString(r["FullName"]) ?? "",
+                    Email = r.Table.Columns.Contains("Email") ? Convert.ToString(r["Email"]) : null,
+                    Phone = r.Table.Columns.Contains("Phone") ? Convert.ToString(r["Phone"]) : null,
+                    Role = role,
+                    RoleName = string.IsNullOrWhiteSpace(roleName) ? EnumDisplay.UserRoleLabel(role) : roleName!,
+                    IsActive = Convert.ToBoolean(r["IsActive"]),
+                    LastLoginAt = r.Table.Columns.Contains("LastLoginAt") && r["LastLoginAt"] != DBNull.Value
+                        ? Convert.ToDateTime(r["LastLoginAt"]) : null
+                };
             }).ToList();
         }
 
@@ -193,6 +238,8 @@ namespace StudentManagement.BusinessLayer
             => System.Threading.Tasks.Task.FromResult(CreateUser(request));
         public System.Threading.Tasks.Task<System.Collections.Generic.List<UserAccountDto>> GetUsersAsync(System.Threading.CancellationToken ct = default)
             => System.Threading.Tasks.Task.FromResult(GetUsers());
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<UserRoleDto>> GetUserRolesAsync(System.Threading.CancellationToken ct = default)
+            => System.Threading.Tasks.Task.FromResult(GetUserRoles());
         public System.Threading.Tasks.Task SetActiveAsync(int userId, bool isActive, System.Threading.CancellationToken ct = default)
             { SetActive(userId, isActive); return System.Threading.Tasks.Task.CompletedTask; }
         public System.Threading.Tasks.Task<bool> TestConnectionAsync(System.Threading.CancellationToken ct = default)

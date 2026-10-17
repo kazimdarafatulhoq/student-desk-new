@@ -45,11 +45,11 @@ No DI container. Forms create managers with `new`.
 5. Set connection string in `src/StudentManagement.Desktop/App.config`
 6. Set `OfflineMode` to `false` when SQL Server is available
 
-**Existing database upgrade:** run [`database/Alter_Lookups_And_AcademicSave.sql`](database/Alter_Lookups_And_AcademicSave.sql) then `StoredProcedures_AcademicSave.sql` to add `BloodGroups` / `PaymentMethods` and Class/Section save SPs.
+**Existing database upgrade:** run [`database/Alter_Lookups_And_AcademicSave.sql`](database/Alter_Lookups_And_AcademicSave.sql) then `StoredProcedures_AcademicSave.sql` to add `BloodGroups` / `PaymentMethods` / `UserRoles` and Class/Section save SPs.
 
 Saves go through stored procedures: `usp_AdmitStudent`, `usp_UpdateStudent`, `usp_SetStudentStatus`, `usp_PostTuitionInvoice`, `usp_RecordFeePayment`, `usp_SaveClass`, `usp_SaveSection`.
 
-Dropdown sources: `usp_GetBloodGroups`, `usp_GetPaymentMethods`.
+Dropdown sources: `usp_GetBloodGroups`, `usp_GetPaymentMethods`, `usp_GetUserRoles`.
 
 ```
 Data Source=NGBC-IT-168;Initial Catalog=StudentManagementSDB;User Id=sa;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;

@@ -36,12 +36,24 @@ SELECT TOP 1 * FROM dbo.Users WHERE UserId = @UserId AND IsDeleted = 0", con);
         {
             using var con = new SqlConnection(DbConfig.ConnectionString);
             using var cmd = new SqlCommand(@"
-SELECT UserId, Username, FullName, Email, Phone, Role, IsActive, LastLoginAt
-FROM dbo.Users WHERE IsDeleted = 0 ORDER BY Username", con);
+SELECT u.UserId, u.Username, u.FullName, u.Email, u.Phone, u.Role,
+       ISNULL(r.Name, CAST(u.Role AS NVARCHAR(20))) AS RoleName,
+       u.IsActive, u.LastLoginAt
+FROM dbo.Users u
+LEFT JOIN dbo.UserRoles r ON r.UserRoleId = u.Role AND r.IsDeleted = 0
+WHERE u.IsDeleted = 0
+ORDER BY u.Username", con);
             using var adapter = new SqlDataAdapter(cmd);
             var dt = new DataTable();
             adapter.Fill(dt);
             return dt;
+        }
+
+        public DataTable GetUserRoles()
+        {
+            var objExecute = new Execute();
+            return (DataTable)objExecute.Executes(
+                "usp_GetUserRoles", ReturnType.DataTable, CommandType.StoredProcedure)!;
         }
 
         public void UpdateLastLogin(int userId)

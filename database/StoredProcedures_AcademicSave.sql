@@ -14,6 +14,7 @@ GO
 
 IF OBJECT_ID(N'dbo.usp_GetBloodGroups', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_GetBloodGroups;
 IF OBJECT_ID(N'dbo.usp_GetPaymentMethods', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_GetPaymentMethods;
+IF OBJECT_ID(N'dbo.usp_GetUserRoles', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_GetUserRoles;
 IF OBJECT_ID(N'dbo.usp_GetClassesAdmin', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_GetClassesAdmin;
 IF OBJECT_ID(N'dbo.usp_SaveClass', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_SaveClass;
 IF OBJECT_ID(N'dbo.usp_GetSectionsAdmin', N'P') IS NOT NULL DROP PROCEDURE dbo.usp_GetSectionsAdmin;
@@ -39,6 +40,17 @@ BEGIN
     FROM dbo.PaymentMethods
     WHERE IsDeleted = 0 AND IsActive = 1
     ORDER BY SortOrder, PaymentMethodId;
+END
+GO
+
+CREATE PROCEDURE dbo.usp_GetUserRoles
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT UserRoleId, Name, Code, SortOrder, IsActive
+    FROM dbo.UserRoles
+    WHERE IsDeleted = 0 AND IsActive = 1
+    ORDER BY SortOrder, UserRoleId;
 END
 GO
 

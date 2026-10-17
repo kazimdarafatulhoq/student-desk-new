@@ -16,6 +16,7 @@ namespace StudentManagement.BusinessLayer.Offline
         public List<SectionDto> Sections { get; } = new();
         public List<BloodGroupDto> BloodGroups { get; } = new();
         public List<PaymentMethodDto> PaymentMethods { get; } = new();
+        public List<UserRoleDto> UserRoles { get; } = new();
         public List<LedgerEntryDto> Ledger { get; } = new();
         public List<UserAccountDto> Users { get; } = new();
         public List<ExamTerm> Terms { get; } = new();
@@ -59,6 +60,13 @@ namespace StudentManagement.BusinessLayer.Offline
                 new PaymentMethodDto { PaymentMethodId = 3, Name = "Nagad", SortOrder = 3 },
                 new PaymentMethodDto { PaymentMethodId = 4, Name = "Bank Transfer", SortOrder = 4 }
             });
+            UserRoles.AddRange(new[]
+            {
+                new UserRoleDto { UserRoleId = 1, Name = "Super Admin", Code = "SuperAdmin", SortOrder = 1 },
+                new UserRoleDto { UserRoleId = 2, Name = "Accounts Manager", Code = "AccountsManager", SortOrder = 2 },
+                new UserRoleDto { UserRoleId = 3, Name = "Admission Officer", Code = "AdmissionOfficer", SortOrder = 3 },
+                new UserRoleDto { UserRoleId = 4, Name = "Teacher", Code = "Teacher", SortOrder = 4 }
+            });
 
             Students.Add(new StudentDto
             {
@@ -93,22 +101,22 @@ namespace StudentManagement.BusinessLayer.Offline
             Users.Add(new UserAccountDto
             {
                 UserId = 1, Username = "admin", FullName = "System Super Admin",
-                Role = UserRole.SuperAdmin, IsActive = true, PasswordHash = "offline"
+                Role = UserRole.SuperAdmin, RoleName = "Super Admin", IsActive = true, PasswordHash = "offline"
             });
             Users.Add(new UserAccountDto
             {
                 UserId = 2, Username = "accounts", FullName = "Accounts Manager",
-                Role = UserRole.AccountsManager, IsActive = true, PasswordHash = "offline"
+                Role = UserRole.AccountsManager, RoleName = "Accounts Manager", IsActive = true, PasswordHash = "offline"
             });
             Users.Add(new UserAccountDto
             {
                 UserId = 3, Username = "admission", FullName = "Admission Officer",
-                Role = UserRole.AdmissionOfficer, IsActive = true, PasswordHash = "offline"
+                Role = UserRole.AdmissionOfficer, RoleName = "Admission Officer", IsActive = true, PasswordHash = "offline"
             });
             Users.Add(new UserAccountDto
             {
                 UserId = 4, Username = "teacher", FullName = "Class Teacher",
-                Role = UserRole.Teacher, IsActive = true, PasswordHash = "offline"
+                Role = UserRole.Teacher, RoleName = "Teacher", IsActive = true, PasswordHash = "offline"
             });
 
             Terms.Add(new ExamTerm

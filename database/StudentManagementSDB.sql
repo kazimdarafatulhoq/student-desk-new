@@ -101,6 +101,22 @@ GO
      PaymentMethod: 1 Cash, 2 Bkash, 3 Nagad, 4 BankTransfer
    ======================================================================== */
 
+CREATE TABLE dbo.UserRoles
+(
+    UserRoleId  INT NOT NULL CONSTRAINT PK_UserRoles PRIMARY KEY,
+    Name        NVARCHAR(50) NOT NULL,
+    Code        NVARCHAR(30) NOT NULL,
+    SortOrder   INT NOT NULL CONSTRAINT DF_UserRoles_SortOrder DEFAULT (0),
+    IsActive    BIT NOT NULL CONSTRAINT DF_UserRoles_IsActive DEFAULT (1),
+    CreatedAt   DATETIME2 NOT NULL CONSTRAINT DF_UserRoles_CreatedAt DEFAULT (SYSUTCDATETIME()),
+    CreatedBy   NVARCHAR(100) NULL,
+    UpdatedAt   DATETIME2 NULL,
+    UpdatedBy   NVARCHAR(100) NULL,
+    IsDeleted   BIT NOT NULL CONSTRAINT DF_UserRoles_IsDeleted DEFAULT (0),
+    CONSTRAINT UQ_UserRoles_Code UNIQUE (Code)
+);
+GO
+
 CREATE TABLE dbo.Users
 (
     UserId          INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Users PRIMARY KEY,
@@ -118,7 +134,8 @@ CREATE TABLE dbo.Users
     UpdatedBy       NVARCHAR(100) NULL,
     IsDeleted       BIT NOT NULL CONSTRAINT DF_Users_IsDeleted DEFAULT (0),
     CONSTRAINT UQ_Users_Username UNIQUE (Username),
-    CONSTRAINT CK_Users_Role CHECK (Role BETWEEN 1 AND 4)
+    CONSTRAINT CK_Users_Role CHECK (Role BETWEEN 1 AND 4),
+    CONSTRAINT FK_Users_UserRoles FOREIGN KEY (Role) REFERENCES dbo.UserRoles(UserRoleId)
 );
 GO
 
@@ -1012,6 +1029,13 @@ GO
    Password hashes are placeholders. DatabaseBootstrapper re-hashes on app
    start so Admin@123 / Accounts@123 / Admission@123 / Teacher@123 work.
    ======================================================================== */
+
+INSERT INTO dbo.UserRoles (UserRoleId, Name, Code, SortOrder, CreatedBy) VALUES
+(1, N'Super Admin',        N'SuperAdmin',        1, N'seed'),
+(2, N'Accounts Manager',   N'AccountsManager',   2, N'seed'),
+(3, N'Admission Officer',  N'AdmissionOfficer',  3, N'seed'),
+(4, N'Teacher',            N'Teacher',           4, N'seed');
+GO
 
 INSERT INTO dbo.Users (Username, FullName, PasswordHash, Email, Role, IsActive, CreatedBy)
 VALUES

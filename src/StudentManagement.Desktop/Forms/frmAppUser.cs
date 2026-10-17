@@ -6,12 +6,8 @@ using StudentManagement.UserObjects.Enums;
 
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace StudentManagement.Desktop.Forms
@@ -29,7 +25,24 @@ namespace StudentManagement.Desktop.Forms
             if (DesignTime.IsActive)
                 return;
             UITheme.ApplyForm(this);
-            Load += async (s, e) => await RefreshUsersAsync();
+            Load += async (s, e) =>
+            {
+                await BindRolesAsync();
+                await RefreshUsersAsync();
+            };
+        }
+
+        private async Task BindRolesAsync()
+        {
+            if (DesignTime.IsActive)
+                return;
+
+            var roles = await Auth.GetUserRolesAsync();
+            cboRole.DisplayMember = nameof(UserRoleDto.Name);
+            cboRole.ValueMember = nameof(UserRoleDto.UserRoleId);
+            cboRole.DataSource = roles.ToList();
+            if (cboRole.Items.Count > 0)
+                cboRole.SelectedIndex = 0;
         }
 
         private async Task RefreshUsersAsync()
@@ -41,9 +54,19 @@ namespace StudentManagement.Desktop.Forms
             dgvUsers.Rows.Clear();
             foreach (var u in users)
             {
-                dgvUsers.Rows.Add(u.UserId, u.Username, u.FullName, u.Role.ToString(), u.IsActive ? "Active" : "Disabled",
+                var roleLabel = string.IsNullOrWhiteSpace(u.RoleName)
+                    ? EnumDisplay.UserRoleLabel(u.Role)
+                    : u.RoleName;
+                dgvUsers.Rows.Add(u.UserId, u.Username, u.FullName, roleLabel, u.IsActive ? "Active" : "Disabled",
                     u.LastLoginAt?.ToString("dd-MMM-yyyy HH:mm") ?? "—");
             }
+        }
+
+        private UserRole ReadSelectedRole()
+        {
+            if (cboRole.SelectedValue != null)
+                return (UserRole)Convert.ToInt32(cboRole.SelectedValue);
+            return UserRole.Teacher;
         }
 
         private async void btnCreate_Click(object? sender, EventArgs e)
@@ -53,6 +76,12 @@ namespace StudentManagement.Desktop.Forms
 
             try
             {
+                if (cboRole.SelectedValue == null)
+                {
+                    MessageBox.Show("Select a role.", "User Management", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 await Auth.CreateUserAsync(new CreateUserRequest
                 {
                     Username = txtUsername.Text.Trim(),
@@ -60,7 +89,7 @@ namespace StudentManagement.Desktop.Forms
                     Password = txtPassword.Text,
                     Email = txtEmail.Text.Trim(),
                     Phone = txtPhone.Text.Trim(),
-                    Role = (UserRole)cboRole.SelectedItem!,
+                    Role = ReadSelectedRole(),
                     CreatedBy = AppSession.Current?.Username
                 });
                 txtUsername.Clear();
@@ -68,6 +97,8 @@ namespace StudentManagement.Desktop.Forms
                 txtPassword.Clear();
                 txtEmail.Clear();
                 txtPhone.Clear();
+                if (cboRole.Items.Count > 0)
+                    cboRole.SelectedIndex = 0;
                 await RefreshUsersAsync();
                 MessageBox.Show("User created successfully.", "User Management", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
