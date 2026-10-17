@@ -63,7 +63,7 @@ namespace StudentManagement.Desktop.Forms
         private void BuildPreview()
         {
             pnlReceiptHost.Controls.Clear();
-            lblCaption.Text = "Money Receipt Preview — prints as half A4 (cut below)";
+            lblCaption.Text = "Money Receipt Preview — review charges, then Print Copy";
 
             var card = CreateReceiptCard();
             pnlReceiptHost.Controls.Add(card);
