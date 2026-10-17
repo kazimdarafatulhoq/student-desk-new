@@ -314,9 +314,8 @@ namespace StudentManagement.Reporting.Generators
                             {
                                 if (second != null)
                                     DrawHalfPageCard(slot, second, institutionName, campus);
-                                else
-                                    // Keep the lower half blank so a single card still prints as half A4.
-                                    slot.Border(1).BorderColor(Colors.Grey.Lighten2);
+                                // Single print: leave bottom half blank with no border.
+                                // Bulk (2 cards/page): second card already has its own border.
                             });
                         });
                     });
