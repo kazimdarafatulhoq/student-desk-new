@@ -11,7 +11,7 @@ namespace StudentManagement.Desktop.Theme
     /// </summary>
     public static class UITheme
     {
-        // Shell surfaces (navbar / header / body) — aligned to IDEAL SMS BD mockups.
+        // Shell surfaces (navbar / header / body).
         public static readonly Color Canvas = Color.FromArgb(17, 24, 39);      // #111827 body
         public static readonly Color Sidebar = Color.FromArgb(11, 14, 20);     // #0B0E14 navbar
         public static readonly Color Card = Color.FromArgb(13, 20, 48);
