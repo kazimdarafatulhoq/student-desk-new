@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace StudentManagement.Desktop.Theme
 {
     /// <summary>
-    /// Ideal High School theme — near-black navbar/header, slate body canvas.
+    /// Fouzdarhat Safiria Dakhil Madrasah theme — near-black navbar/header, slate body canvas.
     /// Do NOT reference this class from InitializeComponent (breaks the VS WinForms designer).
     /// Call UITheme.ApplyForm(this) from the form constructor after InitializeComponent.
     /// </summary>

@@ -27,6 +27,7 @@ namespace StudentManagement.Desktop.Forms
             if (DesignTime.IsActive)
                 return;
             UITheme.ApplyForm(this);
+            lblSubtitle.Text = "Institutional overview for " + AppSession.InstitutionName + ".";
             Load += frmDashboard_LoadLayout;
             Load += async (s, e) => await LoadStatsAsync();
         }

@@ -25,6 +25,8 @@ namespace StudentManagement.Desktop.Forms
             UITheme.ApplyForm(this);
             pnlCard.BackColor = UITheme.Canvas;
             AcceptButton = btnLogin;
+            lblBrand.Text = AppSession.InstitutionName.ToUpperInvariant();
+            Text = "Sign In - " + AppSession.InstitutionName;
             if (AppSession.OfflineMode)
             {
                 lblHint.Text = "Design mode (no database) — use demo users / passwords";

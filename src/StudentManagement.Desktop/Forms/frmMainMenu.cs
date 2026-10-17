@@ -70,6 +70,8 @@ namespace StudentManagement.Desktop.Forms
                 return;
             }
 
+            lblLogo.Text = AppSession.InstitutionName.ToUpperInvariant();
+            Text = AppSession.InstitutionName + " - Student Management";
             lblUserRole.Text = AppSession.Current.FullName + "  ·  " + AppSession.RoleDisplay;
             lblSession.Text = "Session: " + AppSession.Current.AcademicSession;
             lblProfileName.Text = AppSession.Current.FullName;

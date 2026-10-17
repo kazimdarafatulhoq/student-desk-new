@@ -1,7 +1,7 @@
 /*
 ================================================================================
  StudentManagementSDB.sql
- Ideal High School & College — Student Management & Financial Accounting
+ Fouzdarhat Safiria Dakhil Madrasah — Student Management & Financial Accounting
  SQL Server 2022 schema aligned with the WinForms desktop design:
    Admission · Fee Collection Counter · Ledger · Exam Clearance · Admit Card
    Dashboard · User Management

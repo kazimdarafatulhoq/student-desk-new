@@ -1,7 +1,7 @@
 /*
 ================================================================================
  StoredProcedures_StudentSave.sql
- Ideal High School — student admit / update / status via stored procedures
+ Fouzdarhat Safiria Dakhil Madrasah — student admit / update / status via stored procedures
 
  Run against StudentManagementSDB (after StudentManagementSDB.sql).
  The desktop app calls these for Save & Edit Profile.

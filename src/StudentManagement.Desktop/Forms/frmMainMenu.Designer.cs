@@ -405,7 +405,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblLogo.Name = "lblLogo";
             this.lblLogo.Size = new System.Drawing.Size(320, 25);
             this.lblLogo.TabIndex = 0;
-            this.lblLogo.Text = "IDEAL HIGH SCHOOL & COLLEGE";
+            this.lblLogo.Text = "FOUZDARHAT SAFIRIA DAKHIL MADRASAH";
             //
             // lblUserRole
             //
