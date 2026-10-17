@@ -334,10 +334,13 @@ namespace StudentManagement.Reporting.Generators
         private static void DrawHalfPageCard(
             IContainer container, AdmitCardDto card, string institutionName, string campus)
         {
+            // ExtendVertical fills the fixed half-A4 slot so AlignBottom can pin the footer.
             container.Border(1).BorderColor(Colors.Grey.Lighten1).Background(Colors.White)
-                .Padding(12).Decoration(decoration =>
+                .ExtendVertical()
+                .Padding(12)
+                .Layers(layers =>
             {
-                decoration.Content().Column(cardCol =>
+                layers.PrimaryLayer().Column(cardCol =>
                 {
                     cardCol.Item().AlignCenter().Text(institutionName.ToUpperInvariant())
                         .Bold().FontSize(13).FontColor(Colors.BlueGrey.Darken4);
@@ -392,8 +395,8 @@ namespace StudentManagement.Reporting.Generators
                     });
                 });
 
-                // Sticky footer: signatures + admit meta always sit at the bottom of the half-page card.
-                decoration.After().PaddingTop(8).Column(footer =>
+                // Pinned to the bottom edge of the half-page card (not after content flow).
+                layers.Layer().AlignBottom().Column(footer =>
                 {
                     footer.Item().Row(sig =>
                     {

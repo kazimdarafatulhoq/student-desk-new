@@ -186,23 +186,26 @@ namespace StudentManagement.Desktop.Forms
             instBox.Controls.Add(lblInst);
             cardPanel.Controls.Add(instBox);
 
-            // Sticky footer (signatures + admit meta) pinned to the bottom of the half-page card.
-            const int footerBlockHeight = 70;
-            int footerTop = cardPanel.Height - footerBlockHeight - 12;
+            // Sticky footer pinned to the bottom edge of the half-page card preview.
+            const int footerPad = 16;
+            const int sigHeight = 40;
+            const int metaHeight = 22;
+            int metaTop = cardPanel.Height - footerPad - metaHeight;
+            int sigTop = metaTop - sigHeight - 4;
 
             var sigTeacher = MakeLabel("_______________________\nClass Teacher", 9, FontStyle.Regular, Muted, true);
-            sigTeacher.Location = new Point(80, footerTop);
-            sigTeacher.Size = new Size(200, 40);
+            sigTeacher.Location = new Point(80, sigTop);
+            sigTeacher.Size = new Size(200, sigHeight);
             cardPanel.Controls.Add(sigTeacher);
 
             var sigPrincipal = MakeLabel("_______________________\nPrincipal & Controller", 9, FontStyle.Bold, Navy, true);
-            sigPrincipal.Location = new Point(420, footerTop);
-            sigPrincipal.Size = new Size(220, 40);
+            sigPrincipal.Location = new Point(420, sigTop);
+            sigPrincipal.Size = new Size(220, sigHeight);
             cardPanel.Controls.Add(sigPrincipal);
 
             var footer = MakeLabel($"Admit No: {card.AdmitCardNo}   ·   Issued: {card.IssuedAt:dd-MMM-yyyy}", 8, FontStyle.Regular, Muted, true);
-            footer.Location = new Point(24, footerTop + 42);
-            footer.Width = 672;
+            footer.Location = new Point(24, metaTop);
+            footer.Size = new Size(672, metaHeight);
             cardPanel.Controls.Add(footer);
 
             return cardPanel;
