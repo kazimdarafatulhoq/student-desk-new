@@ -240,7 +240,7 @@ namespace StudentManagement.UserObjects.Objects
         public DateTime IssuedAt { get; set; }
         public string? PhotoPath { get; set; }
         public string Venue { get; set; } = "Main Auditorium & Hall 204";
-        public string CampusAddress { get; set; } = "Dhanmondi Campus, Dhaka-1205";
+        public string CampusAddress { get; set; } = "Fouzdarhat, Chittagong, Bangladesh, 4317";
         public string FeeClearanceNote { get; set; } = "Fee Clearance Verified: All required tuition accounts verified.";
     }
 

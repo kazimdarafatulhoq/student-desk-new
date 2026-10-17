@@ -1,6 +1,6 @@
 # Student Management & Financial Accounting
 
-WinForms desktop app for Ideal High School — admissions, fee collection, ledger, exam clearance, and admit cards.
+WinForms desktop app for Fouzdarhat Safiria Dakhil Madrasah — admissions, fee collection, ledger, exam clearance, and admit cards.
 
 Architecture matches a classic **DyeERP-style** layout (Form → Manager → tbl → Stored Procedure).
 
@@ -47,7 +47,7 @@ No DI container. Forms create managers with `new`.
 Saves go through stored procedures: `usp_AdmitStudent`, `usp_UpdateStudent`, `usp_SetStudentStatus`, `usp_PostTuitionInvoice`, `usp_RecordFeePayment`.
 
 ```
-Data Source=NGBC-IT-168\MSSQLSERVER1;Initial Catalog=StudentManagementSDB;User Id=anik;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;
+Data Source=NGBC-IT-168;Initial Catalog=StudentManagementSDB;User Id=sa;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;
 ```
 
 ### Default login

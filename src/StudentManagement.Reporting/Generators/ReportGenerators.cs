@@ -41,7 +41,7 @@ namespace StudentManagement.Reporting.Generators
             Directory.CreateDirectory(outputDirectory);
             var path = Path.Combine(outputDirectory, $"{receipt.ReceiptNo}.pdf");
             var campus = string.IsNullOrWhiteSpace(campusAddress)
-                ? "Dhanmondi Campus, Dhaka-1205, Bangladesh"
+                ? "Fouzdarhat, Chittagong, Bangladesh, 4317"
                 : campusAddress!;
             var lines = (receipt.LineItems ?? new List<ReceiptLineItemDto>())
                 .Where(l => l != null && l.Amount > 0 && !string.IsNullOrWhiteSpace(l.Description))
@@ -279,7 +279,7 @@ namespace StudentManagement.Reporting.Generators
             Directory.CreateDirectory(outputDirectory);
             var path = Path.Combine(outputDirectory, $"AdmitCards_{DateTime.Now:yyyyMMddHHmmss}.pdf");
             var campus = string.IsNullOrWhiteSpace(campusAddress)
-                ? (cards.FirstOrDefault()?.CampusAddress ?? "Dhanmondi Campus, Dhaka-1205")
+                ? (cards.FirstOrDefault()?.CampusAddress ?? "Fouzdarhat, Chittagong, Bangladesh, 4317")
                 : campusAddress;
 
             Document.Create(container =>

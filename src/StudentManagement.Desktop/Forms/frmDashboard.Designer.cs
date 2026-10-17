@@ -108,7 +108,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblSubtitle.Size = new System.Drawing.Size(320, 15);
             this.lblSubtitle.TabIndex = 1;
             this.lblSubtitle.Tag = "muted";
-            this.lblSubtitle.Text = "Institutional overview for Ideal High School & College.";
+            this.lblSubtitle.Text = "Institutional overview for Fouzdarhat Safiria Dakhil Madrasah.";
             //
             // btnQuickFee
             //

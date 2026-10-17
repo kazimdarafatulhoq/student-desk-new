@@ -22,6 +22,9 @@ namespace StudentManagement.Desktop
             AppSession.InstitutionName =
                 ConfigurationManager.AppSettings["InstitutionName"]
                 ?? AppSession.InstitutionName;
+            var campus = ConfigurationManager.AppSettings["InstitutionCampus"];
+            if (!string.IsNullOrWhiteSpace(campus))
+                AppSession.InstitutionCampus = campus;
 
             if (!AppSession.OfflineMode)
             {

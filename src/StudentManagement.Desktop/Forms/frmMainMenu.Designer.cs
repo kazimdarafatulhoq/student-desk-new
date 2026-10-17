@@ -491,7 +491,7 @@ namespace StudentManagement.Desktop.Forms
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
             this.MinimumSize = new System.Drawing.Size(1100, 700);
             this.Name = "frmMainMenu";
-            this.Text = "Ideal High School & College - Student Management";
+            this.Text = "Fouzdarhat Safiria Dakhil Madrasah - Student Management";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.pnlSidebar.ResumeLayout(false);
             this.navFlow.ResumeLayout(false);

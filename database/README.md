@@ -1,6 +1,6 @@
 # Database scripts — StudentManagementSDB
 
-SQL Server 2022 scripts for Ideal High School Student Management.
+SQL Server 2022 scripts for Fouzdarhat Safiria Dakhil Madrasah Student Management.
 
 ## Run order (SSMS as `sa` / Administrator)
 
@@ -15,7 +15,7 @@ SQL Server 2022 scripts for Ideal High School Student Management.
 Must match the desktop app:
 
 ```
-Data Source=NGBC-IT-168\MSSQLSERVER1;Initial Catalog=StudentManagementSDB;User Id=anik;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;
+Data Source=NGBC-IT-168;Initial Catalog=StudentManagementSDB;User Id=sa;Password=***;TrustServerCertificate=True;MultipleActiveResultSets=True;
 ```
 
 Set `OfflineMode` to `false` in `App.config` / `appsettings.json` when SQL Server is available.
@@ -28,7 +28,7 @@ Schema mirrors the WinForms modules: Admission, Fee Collection Counter (month ma
 
 | Table | Purpose |
 |-------|---------|
-| `InstitutionSettings` | Ideal High School & College / campus / session (matches AppSession) |
+| `InstitutionSettings` | Fouzdarhat Safiria Dakhil Madrasah / campus / session (matches AppSession) |
 | `Users` | App logins / RBAC |
 | `Classes` / `Sections` | Academic structure (Class 6–10, A/B) |
 | `Students` | Admission form fields |

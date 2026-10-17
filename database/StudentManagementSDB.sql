@@ -1029,12 +1029,12 @@ GO
 INSERT INTO dbo.InstitutionSettings
     (InstitutionName, CampusName, AcademicSession, AddressLine, Phone, Email, CurrencySymbol, CreatedBy)
 VALUES
-(N'Ideal High School & College',
- N'Dhanmondi Campus, Dhaka-1205',
+(N'Fouzdarhat Safiria Dakhil Madrasah',
+ N'Fouzdarhat, Chittagong, Bangladesh, 4317',
  N'2025-2026',
- N'Dhanmondi, Dhaka-1205, Bangladesh',
- N'02-55000000',
- N'info@idealhighschool.edu',
+ N'Fouzdarhat, Chittagong, Bangladesh, 4317',
+ N'',
+ N'',
  N'৳',
  N'seed');
 GO

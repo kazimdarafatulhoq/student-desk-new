@@ -110,7 +110,7 @@ namespace StudentManagement.Desktop.Forms
             y += 26;
 
             var campusText = string.IsNullOrWhiteSpace(_campus)
-                ? "Dhanmondi Campus, Dhaka-1205, Bangladesh"
+                ? "Fouzdarhat, Chittagong, Bangladesh, 4317"
                 : (_campus.IndexOf("Bangladesh", StringComparison.OrdinalIgnoreCase) >= 0
                     ? _campus
                     : _campus + ", Bangladesh");
