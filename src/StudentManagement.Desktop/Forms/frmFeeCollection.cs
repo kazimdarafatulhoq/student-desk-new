@@ -194,7 +194,7 @@ namespace StudentManagement.Desktop.Forms
         {
             if (_student is null)
             {
-                lblNetPayable.Text = "0.00";
+                lblNetPayable.Text = "৳ 0.00";
                 lblNetPayable.ForeColor = UITheme.Success;
                 lblTuitionTotal.Text = "Tuition: ৳ 0.00";
                 return;
@@ -215,7 +215,7 @@ namespace StudentManagement.Desktop.Forms
             lblTuitionTotal.Text = otherTotal > 0
                 ? $"Tuition: ৳ {tuition:N2}  ·  Other: ৳ {otherTotal:N2}"
                 : $"Tuition: ৳ {tuition:N2}";
-            lblNetPayable.Text = net.ToString("N2");
+            lblNetPayable.Text = $"৳ {net:N2}";
             lblNetPayable.ForeColor = UITheme.Success;
         }
 
@@ -299,7 +299,7 @@ namespace StudentManagement.Desktop.Forms
                 cboPaymentMethod.SelectedIndex = 0;
 
             lblTuitionTotal.Text = "Tuition: ৳ 0.00";
-            lblNetPayable.Text = "0.00";
+            lblNetPayable.Text = "৳ 0.00";
             lblNetPayable.ForeColor = UITheme.Success;
 
             txtSearch.Focus();

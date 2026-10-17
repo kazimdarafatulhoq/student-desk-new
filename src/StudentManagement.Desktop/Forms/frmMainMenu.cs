@@ -319,7 +319,7 @@ namespace StudentManagement.Desktop.Forms
         private void ApplySidebarLayout(bool expanded)
         {
             _sidebarExpanded = expanded;
-            pnlSidebar.Width = expanded ? 260 : 72;
+            pnlSidebar.Width = expanded ? 300 : 72;
             pnlProfile.Visible = expanded;
 
             foreach (Control host in pnlSidebar.Controls)
@@ -338,7 +338,7 @@ namespace StudentManagement.Desktop.Forms
                     string label = b.AccessibleName ?? string.Empty;
                     if (expanded)
                     {
-                        b.Width = 232;
+                        b.Width = 272;
                         b.Text = label;
                         b.TextAlign = ContentAlignment.MiddleLeft;
                         b.ImageAlign = ContentAlignment.MiddleLeft;

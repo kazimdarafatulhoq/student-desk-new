@@ -98,7 +98,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Name = "pnlSidebar";
             this.pnlSidebar.Padding = new System.Windows.Forms.Padding(10, 12, 10, 12);
-            this.pnlSidebar.Size = new System.Drawing.Size(260, 700);
+            this.pnlSidebar.Size = new System.Drawing.Size(300, 700);
             this.pnlSidebar.TabIndex = 0;
             this.pnlSidebar.Tag = "sidebar";
             //
@@ -112,7 +112,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlProfile.Location = new System.Drawing.Point(10, 12);
             this.pnlProfile.Name = "pnlProfile";
             this.pnlProfile.Padding = new System.Windows.Forms.Padding(8, 4, 8, 8);
-            this.pnlProfile.Size = new System.Drawing.Size(240, 72);
+            this.pnlProfile.Size = new System.Drawing.Size(280, 72);
             this.pnlProfile.TabIndex = 0;
             //
             // lblAvatar
@@ -161,7 +161,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnToggleSidebar.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnToggleSidebar.Name = "btnToggleSidebar";
             this.btnToggleSidebar.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnToggleSidebar.Size = new System.Drawing.Size(232, 50);
+            this.btnToggleSidebar.Size = new System.Drawing.Size(272, 50);
             this.btnToggleSidebar.TabIndex = 0;
             this.btnToggleSidebar.Tag = "nav";
             this.btnToggleSidebar.Text = "Collapse";
@@ -178,7 +178,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnDashboard.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnDashboard.Name = "btnDashboard";
             this.btnDashboard.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnDashboard.Size = new System.Drawing.Size(232, 50);
+            this.btnDashboard.Size = new System.Drawing.Size(272, 50);
             this.btnDashboard.TabIndex = 1;
             this.btnDashboard.Tag = "nav";
             this.btnDashboard.Text = "Dashboard";
@@ -195,7 +195,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnAdmission.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnAdmission.Name = "btnAdmission";
             this.btnAdmission.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnAdmission.Size = new System.Drawing.Size(232, 50);
+            this.btnAdmission.Size = new System.Drawing.Size(272, 50);
             this.btnAdmission.TabIndex = 2;
             this.btnAdmission.Tag = "nav";
             this.btnAdmission.Text = "Student Registration";
@@ -212,7 +212,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnSearch.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnSearch.Size = new System.Drawing.Size(232, 50);
+            this.btnSearch.Size = new System.Drawing.Size(272, 50);
             this.btnSearch.TabIndex = 3;
             this.btnSearch.Tag = "nav";
             this.btnSearch.Text = "Student Directory";
@@ -229,7 +229,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnFeeCollection.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnFeeCollection.Name = "btnFeeCollection";
             this.btnFeeCollection.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnFeeCollection.Size = new System.Drawing.Size(232, 50);
+            this.btnFeeCollection.Size = new System.Drawing.Size(272, 50);
             this.btnFeeCollection.TabIndex = 4;
             this.btnFeeCollection.Tag = "nav";
             this.btnFeeCollection.Text = "Fee Collection Counter";
@@ -246,7 +246,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnLedger.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnLedger.Name = "btnLedger";
             this.btnLedger.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnLedger.Size = new System.Drawing.Size(232, 50);
+            this.btnLedger.Size = new System.Drawing.Size(272, 50);
             this.btnLedger.TabIndex = 5;
             this.btnLedger.Tag = "nav";
             this.btnLedger.Text = "Student Ledger";
@@ -263,7 +263,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnExamClearance.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnExamClearance.Name = "btnExamClearance";
             this.btnExamClearance.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnExamClearance.Size = new System.Drawing.Size(232, 50);
+            this.btnExamClearance.Size = new System.Drawing.Size(272, 50);
             this.btnExamClearance.TabIndex = 6;
             this.btnExamClearance.Tag = "nav";
             this.btnExamClearance.Text = "Exam Fee Eligibility";
@@ -280,7 +280,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnAdmitCard.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnAdmitCard.Name = "btnAdmitCard";
             this.btnAdmitCard.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnAdmitCard.Size = new System.Drawing.Size(232, 50);
+            this.btnAdmitCard.Size = new System.Drawing.Size(272, 50);
             this.btnAdmitCard.TabIndex = 7;
             this.btnAdmitCard.Tag = "nav";
             this.btnAdmitCard.Text = "Admit Card Printing";
@@ -297,7 +297,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnClass.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnClass.Name = "btnClass";
             this.btnClass.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnClass.Size = new System.Drawing.Size(232, 50);
+            this.btnClass.Size = new System.Drawing.Size(272, 50);
             this.btnClass.TabIndex = 8;
             this.btnClass.Tag = "nav";
             this.btnClass.Text = "Class Setup";
@@ -314,7 +314,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnSection.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnSection.Name = "btnSection";
             this.btnSection.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnSection.Size = new System.Drawing.Size(232, 50);
+            this.btnSection.Size = new System.Drawing.Size(272, 50);
             this.btnSection.TabIndex = 9;
             this.btnSection.Tag = "nav";
             this.btnSection.Text = "Section Setup";
@@ -331,7 +331,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnUsers.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnUsers.Name = "btnUsers";
             this.btnUsers.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnUsers.Size = new System.Drawing.Size(232, 50);
+            this.btnUsers.Size = new System.Drawing.Size(272, 50);
             this.btnUsers.TabIndex = 10;
             this.btnUsers.Tag = "nav";
             this.btnUsers.Text = "User Access & Security";
@@ -348,7 +348,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnLogout.Margin = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.btnLogout.Name = "btnLogout";
             this.btnLogout.Padding = new System.Windows.Forms.Padding(12, 10, 8, 10);
-            this.btnLogout.Size = new System.Drawing.Size(232, 50);
+            this.btnLogout.Size = new System.Drawing.Size(272, 50);
             this.btnLogout.TabIndex = 11;
             this.btnLogout.Tag = "nav-danger";
             this.btnLogout.Text = "Sign Out";
@@ -415,7 +415,7 @@ namespace StudentManagement.Desktop.Forms
             this.navFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.navFlow.Name = "navFlow";
             this.navFlow.Padding = new System.Windows.Forms.Padding(2);
-            this.navFlow.Size = new System.Drawing.Size(240, 600);
+            this.navFlow.Size = new System.Drawing.Size(280, 600);
             this.navFlow.TabIndex = 1;
             this.navFlow.Tag = "sidebar";
             this.navFlow.WrapContents = false;
@@ -428,7 +428,7 @@ namespace StudentManagement.Desktop.Forms
             this.pnlHeader.Controls.Add(this.lblSession);
             this.pnlHeader.Controls.Add(this.lblClock);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeader.Location = new System.Drawing.Point(260, 0);
+            this.pnlHeader.Location = new System.Drawing.Point(300, 0);
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Padding = new System.Windows.Forms.Padding(16, 8, 16, 8);
             this.pnlHeader.Size = new System.Drawing.Size(840, 64);
@@ -486,7 +486,7 @@ namespace StudentManagement.Desktop.Forms
             //
             this.pnlContentContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
             this.pnlContentContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContentContainer.Location = new System.Drawing.Point(260, 64);
+            this.pnlContentContainer.Location = new System.Drawing.Point(300, 64);
             this.pnlContentContainer.Name = "pnlContentContainer";
             this.pnlContentContainer.Padding = new System.Windows.Forms.Padding(8);
             this.pnlContentContainer.Size = new System.Drawing.Size(840, 614);
@@ -499,7 +499,7 @@ namespace StudentManagement.Desktop.Forms
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblDbStatus,
             this.lblSync});
-            this.statusBar.Location = new System.Drawing.Point(260, 678);
+            this.statusBar.Location = new System.Drawing.Point(300, 678);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(840, 22);
             this.statusBar.TabIndex = 3;

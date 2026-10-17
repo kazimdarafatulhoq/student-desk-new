@@ -494,11 +494,11 @@ namespace StudentManagement.Desktop.Forms
             this.lblNetPayable.AutoSize = false;
             this.lblNetPayable.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblNetPayable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(185)))), ((int)(((byte)(129)))));
-            this.lblNetPayable.Location = new System.Drawing.Point(500, 125);
+            this.lblNetPayable.Location = new System.Drawing.Point(470, 125);
             this.lblNetPayable.Name = "lblNetPayable";
-            this.lblNetPayable.Size = new System.Drawing.Size(240, 42);
+            this.lblNetPayable.Size = new System.Drawing.Size(270, 42);
             this.lblNetPayable.TabIndex = 13;
-            this.lblNetPayable.Text = "0.00";
+            this.lblNetPayable.Text = "৳ 0.00";
             this.lblNetPayable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnCollect.Location = new System.Drawing.Point(750, 128);
             this.btnCollect.Name = "btnCollect";
