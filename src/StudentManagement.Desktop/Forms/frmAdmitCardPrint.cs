@@ -236,12 +236,16 @@ namespace StudentManagement.Desktop.Forms
                 }
 
                 btnBatch.Enabled = false;
-                var classLabel = _classes.FirstOrDefault(c => c.ClassId == classId.Value)?.ClassName
-                                 ?? $"Class {classId.Value}";
+                var selectedClass = _classes.FirstOrDefault(c => c.ClassId == classId.Value);
+                var classLabel = selectedClass?.ClassName ?? $"Class {classId.Value}";
 
-                // Whole class roster (ignore search box) — roll order for printing.
+                // Whole class roster by ClassId (also match ClassName in case of rename edge cases).
                 var students = _lookup
-                    .Where(s => s.ClassId == classId.Value)
+                    .Where(s => s.ClassId == classId.Value
+                                || (!string.IsNullOrWhiteSpace(selectedClass?.ClassName)
+                                    && string.Equals(s.ClassName, selectedClass!.ClassName, StringComparison.OrdinalIgnoreCase)))
+                    .GroupBy(s => s.StudentId)
+                    .Select(g => g.First())
                     .OrderBy(s => s.SectionName)
                     .ThenBy(s => s.RollNumber, StringComparer.OrdinalIgnoreCase)
                     .ThenBy(s => s.FullName, StringComparer.OrdinalIgnoreCase)
@@ -256,11 +260,22 @@ namespace StudentManagement.Desktop.Forms
 
                 var issued = new List<AdmitCardDto>();
                 var blocked = new List<(StudentDto Student, decimal Dues)>();
+                var errors = new List<string>();
 
                 foreach (var s in students)
                 {
-                    // Due / not cleared → skip; rest of the class prints.
-                    var clearance = await Exams.GetAdmitPrintEligibilityAsync(s.StudentId, termId.Value);
+                    // Due / not cleared → skip; cleared (incl. Exam Clearance verify) → print.
+                    ExamClearanceDto clearance;
+                    try
+                    {
+                        clearance = await Exams.GetAdmitPrintEligibilityAsync(s.StudentId, termId.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add($"{s.RegistrationNo} {s.FullName}: {ex.Message}");
+                        continue;
+                    }
+
                     if (!clearance.IsCleared)
                     {
                         blocked.Add((s, clearance.DuesAtClearance));
@@ -273,36 +288,52 @@ namespace StudentManagement.Desktop.Forms
                             s.StudentId, termId.Value, AppSession.Current?.UserId ?? 0);
                         issued.Add(card);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        blocked.Add((s, clearance.DuesAtClearance));
+                        errors.Add($"{s.RegistrationNo} {s.FullName}: {ex.Message}");
                     }
                 }
 
+                var summary = new StringBuilder();
+                summary.AppendLine($"{classLabel} · Term selected");
+                summary.AppendLine($"Total in class: {students.Count}");
+                summary.AppendLine($"Printable (cleared): {issued.Count}");
+                summary.AppendLine($"Skipped (dues): {blocked.Count}");
+                if (errors.Count > 0)
+                    summary.AppendLine($"Errors: {errors.Count}");
+                summary.AppendLine();
+
                 if (blocked.Count > 0)
                 {
-                    var smsLog = new StringBuilder();
-                    smsLog.AppendLine($"{classLabel}: {blocked.Count} student(s) have dues — skipped from bulk print.");
-                    smsLog.AppendLine($"{issued.Count} cleared student(s) will print.");
-                    smsLog.AppendLine();
-                    smsLog.AppendLine("SMS / Madrasah Authority contact:");
-                    smsLog.AppendLine();
+                    summary.AppendLine("Due / not cleared (SMS):");
                     foreach (var (student, dues) in blocked.Take(20))
-                        smsLog.AppendLine("• " + BuildDueSms(student, dues));
+                        summary.AppendLine("• " + BuildDueSms(student, dues));
                     if (blocked.Count > 20)
-                        smsLog.AppendLine($"… and {blocked.Count - 20} more.");
+                        summary.AppendLine($"… and {blocked.Count - 20} more.");
+                    summary.AppendLine();
+                }
 
+                if (errors.Count > 0)
+                {
+                    summary.AppendLine("Errors:");
+                    foreach (var err in errors.Take(10))
+                        summary.AppendLine("• " + err);
+                    summary.AppendLine();
+                }
+
+                if (blocked.Count > 0 || errors.Count > 0 || issued.Count > 0)
+                {
                     MessageBox.Show(
-                        smsLog.ToString(),
-                        $"Due skipped — {classLabel}",
+                        summary.ToString(),
+                        $"Bulk — {classLabel}",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        issued.Count > 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
                 }
 
                 if (issued.Count == 0)
                 {
                     lblStatus.ForeColor = UITheme.Warning;
-                    lblStatus.Text = $"{classLabel}: 0 printable. All {blocked.Count} have dues / not cleared.";
+                    lblStatus.Text = $"{classLabel}: 0 cards. Cleared must match this Exam Term. Skipped dues: {blocked.Count}, errors: {errors.Count}.";
                     return;
                 }
 

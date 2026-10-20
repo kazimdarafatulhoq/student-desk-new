@@ -206,8 +206,9 @@ namespace StudentManagement.BusinessLayer
             long admitCardId = studentId * 100L + examTermId;
             if (!DbConfig.OfflineMode)
             {
+                long? clearanceFk = clearance.ClearanceId > 0 ? clearance.ClearanceId : null;
                 admitCardId = new tblExam().IssueAdmitCard(
-                    studentId, examTermId, admitCardNo, barcode, issuedByUserId, clearance.ClearanceId);
+                    studentId, examTermId, admitCardNo, barcode, issuedByUserId, clearanceFk);
             }
 
             return new AdmitCardDto

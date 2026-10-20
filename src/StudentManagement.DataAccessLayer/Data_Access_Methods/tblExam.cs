@@ -90,6 +90,39 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT);", con);
             string barcodeValue, int issuedByUserId, long? clearanceId)
         {
             using var con = new SqlConnection(DbConfig.ConnectionString);
+            con.Open();
+
+            // Reuse existing card for same student + term (bulk re-print / unique AdmitCardNo).
+            using (var find = new SqlCommand(@"
+SELECT TOP 1 AdmitCardId FROM dbo.AdmitCards
+WHERE StudentId = @StudentId AND ExamTermId = @ExamTermId AND IsDeleted = 0
+ORDER BY AdmitCardId DESC", con))
+            {
+                find.Parameters.AddWithValue("@StudentId", studentId);
+                find.Parameters.AddWithValue("@ExamTermId", examTermId);
+                var existing = find.ExecuteScalar();
+                if (existing != null && existing != DBNull.Value)
+                {
+                    using var upd = new SqlCommand(@"
+UPDATE dbo.AdmitCards SET
+  AdmitCardNo = @AdmitCardNo,
+  BarcodeValue = @BarcodeValue,
+  IssuedAt = SYSUTCDATETIME(),
+  IssuedByUserId = @IssuedByUserId,
+  ClearanceId = @ClearanceId,
+  UpdatedAt = SYSUTCDATETIME()
+WHERE AdmitCardId = @AdmitCardId;
+SELECT @AdmitCardId;", con);
+                    upd.Parameters.AddWithValue("@AdmitCardId", Convert.ToInt64(existing));
+                    upd.Parameters.AddWithValue("@AdmitCardNo", admitCardNo);
+                    upd.Parameters.AddWithValue("@BarcodeValue", barcodeValue);
+                    upd.Parameters.AddWithValue("@IssuedByUserId", issuedByUserId);
+                    upd.Parameters.AddWithValue("@ClearanceId",
+                        clearanceId is > 0 ? clearanceId.Value : (object)DBNull.Value);
+                    return Convert.ToInt64(upd.ExecuteScalar());
+                }
+            }
+
             using var cmd = new SqlCommand(@"
 INSERT INTO dbo.AdmitCards
  (StudentId, ExamTermId, AdmitCardNo, BarcodeValue, IssuedAt, IssuedByUserId, ClearanceId)
@@ -101,8 +134,8 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT);", con);
             cmd.Parameters.AddWithValue("@AdmitCardNo", admitCardNo);
             cmd.Parameters.AddWithValue("@BarcodeValue", barcodeValue);
             cmd.Parameters.AddWithValue("@IssuedByUserId", issuedByUserId);
-            cmd.Parameters.AddWithValue("@ClearanceId", (object?)clearanceId ?? DBNull.Value);
-            con.Open();
+            cmd.Parameters.AddWithValue("@ClearanceId",
+                clearanceId is > 0 ? clearanceId.Value : (object)DBNull.Value);
             return Convert.ToInt64(cmd.ExecuteScalar());
         }
     }
