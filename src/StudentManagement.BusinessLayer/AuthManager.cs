@@ -200,14 +200,14 @@ namespace StudentManagement.BusinessLayer
             return module switch
             {
                 "Dashboard" => true,
-                "Admission" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
+                "Admission" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer or UserRole.AccountsManager,
                 "Search" => true,
-                "FeeCollection" => role is UserRole.SuperAdmin or UserRole.AccountsManager,
+                "FeeCollection" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer or UserRole.AccountsManager,
                 "Ledger" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.AdmissionOfficer,
                 "ExamClearance" => role is UserRole.SuperAdmin,
-                "AdmitCard" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.Teacher,
-                "ClassSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
-                "SectionSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
+                "AdmitCard" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer or UserRole.AccountsManager or UserRole.Teacher,
+                "ClassSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer or UserRole.AccountsManager,
+                "SectionSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer or UserRole.AccountsManager,
                 "Users" => role is UserRole.SuperAdmin,
                 _ => role == UserRole.SuperAdmin
             };
