@@ -115,14 +115,14 @@ namespace StudentManagement.Desktop.Forms
                 if (!result.IsCleared)
                 {
                     lblResult.ForeColor = UITheme.Danger;
-                    lblResult.Text = $"BLOCKED — Outstanding dues ৳ {result.DuesAtClearance:N2}. Admit card cannot be issued unless an admin overrides.";
+                    lblResult.Text = $"BLOCKED — Outstanding dues ৳ {result.DuesAtClearance:N2}. Use Admin override here, or clear dues — then Admit Card Print will work.";
                 }
                 else
                 {
                     lblResult.ForeColor = UITheme.Success;
                     lblResult.Text = result.AdminOverride
-                        ? $"CLEARED with admin override (dues were ৳ {result.DuesAtClearance:N2})."
-                        : "CLEARED — No outstanding dues. Eligible for admit card.";
+                        ? $"CLEARED with admin override (dues were ৳ {result.DuesAtClearance:N2}). You can now print admit card."
+                        : "CLEARED — No outstanding dues. You can now print admit card.";
                 }
             }
             catch (Exception ex)

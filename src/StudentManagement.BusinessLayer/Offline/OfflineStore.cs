@@ -20,9 +20,11 @@ namespace StudentManagement.BusinessLayer.Offline
         public List<LedgerEntryDto> Ledger { get; } = new();
         public List<UserAccountDto> Users { get; } = new();
         public List<ExamTerm> Terms { get; } = new();
+        public List<ExamClearanceDto> Clearances { get; } = new();
         public List<FeeCollectionResult> Payments { get; } = new();
         public long NextLedgerId = 1000;
         public long NextPaymentId = 1000;
+        public long NextClearanceId = 1000;
         public int NextStudentId = 10;
         public int NextUserId = 10;
 

@@ -20,6 +20,22 @@ ORDER BY StartDate DESC", con);
             return dt;
         }
 
+        public DataTable? GetClearance(int studentId, int examTermId)
+        {
+            using var con = new SqlConnection(DbConfig.ConnectionString);
+            using var cmd = new SqlCommand(@"
+SELECT TOP 1 ClearanceId, StudentId, ExamTermId, DuesAtClearance, IsCleared,
+       AdminOverride, OverrideReason, ClearedAt, Remarks
+FROM dbo.ExamClearances
+WHERE StudentId = @StudentId AND ExamTermId = @ExamTermId AND IsDeleted = 0", con);
+            cmd.Parameters.AddWithValue("@StudentId", studentId);
+            cmd.Parameters.AddWithValue("@ExamTermId", examTermId);
+            using var adapter = new SqlDataAdapter(cmd);
+            var dt = new DataTable();
+            adapter.Fill(dt);
+            return dt.Rows.Count == 0 ? null : dt;
+        }
+
         public long UpsertClearance(int studentId, int examTermId, decimal dues,
             bool isCleared, bool adminOverride, string? overrideReason, int? clearedByUserId, string? remarks)
         {

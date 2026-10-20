@@ -30,6 +30,48 @@ namespace StudentManagement.BusinessLayer
             }).ToList();
         }
 
+        /// <summary>Saved clearance row for student + term (if any).</summary>
+        public ExamClearanceDto? GetSavedClearance(int studentId, int examTermId)
+        {
+            var student = new StudentManager().GetById(studentId);
+            var term = GetActiveTerms().FirstOrDefault(t => t.ExamTermId == examTermId);
+
+            if (DbConfig.OfflineMode)
+            {
+                var offline = OfflineStore.Instance.Clearances
+                    .FirstOrDefault(c => c.StudentId == studentId && c.ExamTermId == examTermId);
+                if (offline == null) return null;
+                if (student != null)
+                {
+                    offline.RegistrationNo = student.RegistrationNo;
+                    offline.FullName = student.FullName;
+                    offline.ClassName = student.ClassName;
+                    offline.RollNumber = student.RollNumber;
+                }
+                if (term != null) offline.TermName = term.TermName;
+                return offline;
+            }
+
+            var dt = new tblExam().GetClearance(studentId, examTermId);
+            if (dt == null || dt.Rows.Count == 0) return null;
+            var r = dt.Rows[0];
+            return new ExamClearanceDto
+            {
+                ClearanceId = Convert.ToInt64(r["ClearanceId"]),
+                StudentId = Convert.ToInt32(r["StudentId"]),
+                RegistrationNo = student?.RegistrationNo ?? "",
+                FullName = student?.FullName ?? "",
+                ClassName = student?.ClassName ?? "",
+                RollNumber = student?.RollNumber ?? "",
+                ExamTermId = Convert.ToInt32(r["ExamTermId"]),
+                TermName = term?.TermName ?? "",
+                DuesAtClearance = r["DuesAtClearance"] != DBNull.Value ? Convert.ToDecimal(r["DuesAtClearance"]) : 0,
+                IsCleared = Convert.ToBoolean(r["IsCleared"]),
+                AdminOverride = Convert.ToBoolean(r["AdminOverride"]),
+                OverrideReason = r.Table.Columns.Contains("OverrideReason") ? Convert.ToString(r["OverrideReason"]) : null
+            };
+        }
+
         public ExamClearanceDto VerifyClearance(
             int studentId, int examTermId, bool adminOverride = false,
             string? overrideReason = null, int? userId = null, UserRole? role = null)
@@ -74,7 +116,28 @@ namespace StudentManagement.BusinessLayer
             }
             else
             {
-                clearanceId = studentId * 1000L + examTermId;
+                var store = OfflineStore.Instance;
+                var existing = store.Clearances.FirstOrDefault(c => c.StudentId == studentId && c.ExamTermId == examTermId);
+                if (existing == null)
+                {
+                    clearanceId = store.NextClearanceId++;
+                    existing = new ExamClearanceDto { ClearanceId = clearanceId, StudentId = studentId, ExamTermId = examTermId };
+                    store.Clearances.Add(existing);
+                }
+                else
+                {
+                    clearanceId = existing.ClearanceId;
+                }
+
+                existing.RegistrationNo = student.RegistrationNo;
+                existing.FullName = student.FullName;
+                existing.ClassName = student.ClassName;
+                existing.RollNumber = student.RollNumber;
+                existing.TermName = term.TermName;
+                existing.DuesAtClearance = summary.NetDue;
+                existing.IsCleared = true;
+                existing.AdminOverride = adminOverride && hasDues;
+                existing.OverrideReason = overrideReason;
             }
 
             return new ExamClearanceDto
@@ -94,15 +157,46 @@ namespace StudentManagement.BusinessLayer
             };
         }
 
+        /// <summary>
+        /// Admit print eligibility:
+        /// 1) Saved ExamClearances.IsCleared = true (including admin override from Clearance form) → allowed
+        /// 2) Else no current dues → auto-clear and allow
+        /// 3) Else blocked (must clear dues or verify with override on Clearance form)
+        /// </summary>
+        public ExamClearanceDto GetAdmitPrintEligibility(int studentId, int examTermId)
+        {
+            var saved = GetSavedClearance(studentId, examTermId);
+            if (saved != null && saved.IsCleared)
+                return saved;
+
+            return VerifyClearance(studentId, examTermId, adminOverride: false);
+        }
+
         public AdmitCardDto IssueAdmitCard(
             int studentId, int examTermId, int issuedByUserId,
             bool adminOverride = false, string? overrideReason = null, UserRole? role = null)
         {
-            var clearance = VerifyClearance(studentId, examTermId, adminOverride, overrideReason, issuedByUserId, role);
+            // Prefer existing clearance from Exam Clearance Verification.
+            // Optional adminOverride here is unused by Admit Print UI (kept for API compatibility).
+            ExamClearanceDto clearance;
+            var saved = GetSavedClearance(studentId, examTermId);
+            if (saved != null && saved.IsCleared)
+            {
+                clearance = saved;
+            }
+            else if (adminOverride)
+            {
+                clearance = VerifyClearance(studentId, examTermId, true, overrideReason, issuedByUserId, role);
+            }
+            else
+            {
+                clearance = VerifyClearance(studentId, examTermId, false, null, issuedByUserId, role);
+            }
+
             if (!clearance.IsCleared)
                 throw new InvalidOperationException(
                     $"Cannot issue admit card. Outstanding dues: ৳{clearance.DuesAtClearance:N2}. " +
-                    "Contact Madrasah Authority to clear dues. Admit card prints only when there is no due.");
+                    "Clear dues, or verify with Admin Override on Exam Clearance Verification first.");
 
             var student = new StudentManager().GetById(studentId)!;
             var term = GetActiveTerms().First(t => t.ExamTermId == examTermId);
@@ -132,13 +226,17 @@ namespace StudentManagement.BusinessLayer
                 IssuedAt = DateTime.Now,
                 PhotoPath = student.PhotoPath,
                 FeeClearanceNote = clearance.AdminOverride
-                    ? "Fee Clearance Verified: Issued with admin override."
+                    ? "Fee Clearance Verified: Issued with admin override (Exam Clearance)."
                     : "Fee Clearance Verified: All required tuition accounts verified."
             };
         }
 
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ExamTerm>> GetActiveTermsAsync(System.Threading.CancellationToken ct = default)
             => System.Threading.Tasks.Task.FromResult(GetActiveTerms());
+        public System.Threading.Tasks.Task<ExamClearanceDto?> GetSavedClearanceAsync(int studentId, int examTermId, System.Threading.CancellationToken ct = default)
+            => System.Threading.Tasks.Task.FromResult(GetSavedClearance(studentId, examTermId));
+        public System.Threading.Tasks.Task<ExamClearanceDto> GetAdmitPrintEligibilityAsync(int studentId, int examTermId, System.Threading.CancellationToken ct = default)
+            => System.Threading.Tasks.Task.FromResult(GetAdmitPrintEligibility(studentId, examTermId));
         public System.Threading.Tasks.Task<ExamClearanceDto> VerifyClearanceAsync(
             int studentId, int examTermId, bool adminOverride = false, string? overrideReason = null,
             int? userId = null, UserRole? role = null, System.Threading.CancellationToken ct = default)

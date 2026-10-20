@@ -126,15 +126,17 @@ namespace StudentManagement.Desktop.Forms
         {
             var sms = BuildDueSms(student, dues);
             MessageBox.Show(
-                "Admit card print blocked — outstanding dues.\n\n" +
+                "Admit card print blocked — outstanding dues / not cleared.\n\n" +
                 $"Student: {student.FullName} ({student.RegistrationNo})\n" +
                 $"Due: ৳{dues:N2}\n\n" +
+                "Option 1: Clear dues, then print.\n" +
+                "Option 2: Exam Clearance Verification → Admin override → then print here.\n\n" +
                 "SMS (guardian-ke pathan):\n" + sms,
                 "Due — Contact Madrasah Authority",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
             lblStatus.ForeColor = UITheme.Warning;
-            lblStatus.Text = $"Blocked: {student.FullName} · due ৳{dues:N2}. SMS ready — contact Madrasah Authority.";
+            lblStatus.Text = $"Blocked: {student.FullName} · due ৳{dues:N2}. Clear dues or verify on Exam Clearance first.";
         }
 
         private async void btnIssue_Click(object? sender, EventArgs e)
@@ -155,9 +157,8 @@ namespace StudentManagement.Desktop.Forms
 
                 btnIssue.Enabled = false;
 
-                // No admin override on admit print — dues must be cleared first.
-                var clearance = await Exams.VerifyClearanceAsync(
-                    studentId.Value, termId.Value, adminOverride: false);
+                // Uses saved Exam Clearance if already verified; otherwise live dues check.
+                var clearance = await Exams.GetAdmitPrintEligibilityAsync(studentId.Value, termId.Value);
 
                 if (!clearance.IsCleared)
                 {
@@ -168,7 +169,7 @@ namespace StudentManagement.Desktop.Forms
                     else
                     {
                         lblStatus.ForeColor = UITheme.Danger;
-                        lblStatus.Text = $"Cannot print. Outstanding dues: ৳{clearance.DuesAtClearance:N2}. Contact Madrasah Authority.";
+                        lblStatus.Text = $"Cannot print. Outstanding dues: ৳{clearance.DuesAtClearance:N2}. Verify on Exam Clearance or clear dues.";
                     }
                     return;
                 }
@@ -176,8 +177,7 @@ namespace StudentManagement.Desktop.Forms
                 var card = await Exams.IssueAdmitCardAsync(
                     studentId.Value,
                     termId.Value,
-                    AppSession.Current?.UserId ?? 0,
-                    adminOverride: false);
+                    AppSession.Current?.UserId ?? 0);
 
                 using var preview = new frmAdmitCardPreview(
                     new[] { card },
@@ -241,8 +241,7 @@ namespace StudentManagement.Desktop.Forms
 
                 foreach (var s in students)
                 {
-                    var clearance = await Exams.VerifyClearanceAsync(
-                        s.StudentId, termId.Value, adminOverride: false);
+                    var clearance = await Exams.GetAdmitPrintEligibilityAsync(s.StudentId, termId.Value);
                     if (!clearance.IsCleared)
                     {
                         blocked.Add((s, clearance.DuesAtClearance));
@@ -252,8 +251,7 @@ namespace StudentManagement.Desktop.Forms
                     try
                     {
                         var card = await Exams.IssueAdmitCardAsync(
-                            s.StudentId, termId.Value, AppSession.Current?.UserId ?? 0,
-                            adminOverride: false);
+                            s.StudentId, termId.Value, AppSession.Current?.UserId ?? 0);
                         issued.Add(card);
                     }
                     catch
