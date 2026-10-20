@@ -77,7 +77,7 @@ namespace StudentManagement.Desktop.Forms
             lblStatus.ForeColor = UITheme.TextMuted;
             lblStatus.Text = matchCount == 0
                 ? $"No students in {classLabel} match this search."
-                : $"Showing {matchCount} student(s) · Class filter: {classLabel}. Single = selected student; bulk = this class filter. Due students are skipped.";
+                : $"Showing {matchCount} student(s) · Class: {classLabel}. Single = selected student. Bulk = whole class (dues skipped).";
         }
 
         private List<StudentDto> FilterLookup(int? classId, string? search)
@@ -221,18 +221,36 @@ namespace StudentManagement.Desktop.Forms
                     return;
                 }
 
-                btnBatch.Enabled = false;
+                // Bulk is class-wise: a concrete class must be selected (not All Classes).
                 var classId = StudentComboBinder.TryGetSelectedInt(cboClass);
-                var classLabel = classId is int id
-                    ? (_classes.FirstOrDefault(c => c.ClassId == id)?.ClassName ?? $"Class {id}")
-                    : "All Classes";
+                if (classId is null || classId.Value <= 0)
+                {
+                    lblStatus.ForeColor = UITheme.Warning;
+                    lblStatus.Text = "Bulk print is class-wise. Select a Class first (not All Classes).";
+                    MessageBox.Show(
+                        "Bulk print class onujayi hoy.\n\nPehele Class select korun (All Classes na).",
+                        "Select Class",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return;
+                }
 
-                var students = FilterLookup(classId, txtStudentSearch.Text);
+                btnBatch.Enabled = false;
+                var classLabel = _classes.FirstOrDefault(c => c.ClassId == classId.Value)?.ClassName
+                                 ?? $"Class {classId.Value}";
+
+                // Whole class roster (ignore search box) — roll order for printing.
+                var students = _lookup
+                    .Where(s => s.ClassId == classId.Value)
+                    .OrderBy(s => s.SectionName)
+                    .ThenBy(s => s.RollNumber, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(s => s.FullName, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
 
                 if (students.Count == 0)
                 {
                     lblStatus.ForeColor = UITheme.Warning;
-                    lblStatus.Text = $"No active students found for bulk print ({classLabel}).";
+                    lblStatus.Text = $"No active students found in {classLabel}.";
                     return;
                 }
 
@@ -241,6 +259,7 @@ namespace StudentManagement.Desktop.Forms
 
                 foreach (var s in students)
                 {
+                    // Due / not cleared → skip; rest of the class prints.
                     var clearance = await Exams.GetAdmitPrintEligibilityAsync(s.StudentId, termId.Value);
                     if (!clearance.IsCleared)
                     {
@@ -263,17 +282,19 @@ namespace StudentManagement.Desktop.Forms
                 if (blocked.Count > 0)
                 {
                     var smsLog = new StringBuilder();
-                    smsLog.AppendLine($"{blocked.Count} student(s) have dues — admit card skipped.");
-                    smsLog.AppendLine("Send SMS / ask guardian to contact Madrasah Authority:");
+                    smsLog.AppendLine($"{classLabel}: {blocked.Count} student(s) have dues — skipped from bulk print.");
+                    smsLog.AppendLine($"{issued.Count} cleared student(s) will print.");
                     smsLog.AppendLine();
-                    foreach (var (student, dues) in blocked.Take(15))
+                    smsLog.AppendLine("SMS / Madrasah Authority contact:");
+                    smsLog.AppendLine();
+                    foreach (var (student, dues) in blocked.Take(20))
                         smsLog.AppendLine("• " + BuildDueSms(student, dues));
-                    if (blocked.Count > 15)
-                        smsLog.AppendLine($"… and {blocked.Count - 15} more.");
+                    if (blocked.Count > 20)
+                        smsLog.AppendLine($"… and {blocked.Count - 20} more.");
 
                     MessageBox.Show(
                         smsLog.ToString(),
-                        "Due students — SMS / Madrasah Authority",
+                        $"Due skipped — {classLabel}",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
@@ -281,7 +302,7 @@ namespace StudentManagement.Desktop.Forms
                 if (issued.Count == 0)
                 {
                     lblStatus.ForeColor = UITheme.Warning;
-                    lblStatus.Text = $"No admit cards for {classLabel}. {blocked.Count} blocked (dues). Only cleared students can print.";
+                    lblStatus.Text = $"{classLabel}: 0 printable. All {blocked.Count} have dues / not cleared.";
                     return;
                 }
 
@@ -293,14 +314,15 @@ namespace StudentManagement.Desktop.Forms
                 if (result == DialogResult.OK)
                 {
                     lblStatus.ForeColor = UITheme.Success;
-                    lblStatus.Text = $"Batch printed ({classLabel}): {issued.Count} card(s)" +
-                                     (blocked.Count > 0 ? $", {blocked.Count} skipped (dues/SMS)." : ".") +
+                    lblStatus.Text = $"{classLabel} bulk printed: {issued.Count} card(s)" +
+                                     (blocked.Count > 0 ? $", {blocked.Count} due skipped." : ".") +
                                      $" PDF: {preview.SavedPdfPath}";
                 }
                 else
                 {
                     lblStatus.ForeColor = UITheme.TextMuted;
-                    lblStatus.Text = $"Batch issued {issued.Count} card(s) for {classLabel}. Preview closed without printing.";
+                    lblStatus.Text = $"{classLabel}: {issued.Count} card(s) ready. Preview closed without printing." +
+                                     (blocked.Count > 0 ? $" {blocked.Count} due skipped." : "");
                 }
             }
             catch (Exception ex)

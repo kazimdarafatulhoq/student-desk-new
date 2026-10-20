@@ -134,7 +134,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblClass.Name = "lblClass";
             this.lblClass.Size = new System.Drawing.Size(180, 15);
             this.lblClass.TabIndex = 5;
-            this.lblClass.Text = "Class (filters list + bulk print)";
+            this.lblClass.Text = "Class (required for bulk print)";
             //
             // cboClass
             //
@@ -162,7 +162,7 @@ namespace StudentManagement.Desktop.Forms
             this.btnBatch.Size = new System.Drawing.Size(200, 36);
             this.btnBatch.TabIndex = 8;
             this.btnBatch.Tag = "success";
-            this.btnBatch.Text = "Preview & Print Bulk";
+            this.btnBatch.Text = "Bulk Print (Class)";
             this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
             //
             // lblStatus
@@ -172,7 +172,7 @@ namespace StudentManagement.Desktop.Forms
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(760, 70);
             this.lblStatus.TabIndex = 2;
-            this.lblStatus.Text = "Only fee-cleared students can print. Students with dues are blocked and shown an SMS to contact Madrasah Authority.";
+            this.lblStatus.Text = "Single = one student. Bulk = selected class; due students are skipped, rest print.";
             //
             // frmAdmitCardPrint
             //
