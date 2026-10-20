@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -76,7 +77,7 @@ namespace StudentManagement.Desktop.Forms
             lblStatus.ForeColor = UITheme.TextMuted;
             lblStatus.Text = matchCount == 0
                 ? $"No students in {classLabel} match this search."
-                : $"Showing {matchCount} student(s) · Class filter: {classLabel}. Single print uses the selected student; bulk uses this class filter.";
+                : $"Showing {matchCount} student(s) · Class filter: {classLabel}. Single = selected student; bulk = this class filter. Due students are skipped.";
         }
 
         private List<StudentDto> FilterLookup(int? classId, string? search)
@@ -112,6 +113,30 @@ namespace StudentManagement.Desktop.Forms
             RefreshStudentList();
         }
 
+        private static string BuildDueSms(StudentDto student, decimal dues)
+        {
+            var phone = string.IsNullOrWhiteSpace(student.GuardianPhone) ? "—" : student.GuardianPhone.Trim();
+            return
+                $"Assalamu Alaikum. {student.FullName} ({student.RegistrationNo}) er due ৳{dues:N2} ache. " +
+                $"Admit card print hobe na. Madrasah Authority-r shathe jogajog korun. " +
+                $"Guardian phone: {phone}. — {AppSession.InstitutionName}";
+        }
+
+        private void ShowDueBlockedMessage(StudentDto student, decimal dues)
+        {
+            var sms = BuildDueSms(student, dues);
+            MessageBox.Show(
+                "Admit card print blocked — outstanding dues.\n\n" +
+                $"Student: {student.FullName} ({student.RegistrationNo})\n" +
+                $"Due: ৳{dues:N2}\n\n" +
+                "SMS (guardian-ke pathan):\n" + sms,
+                "Due — Contact Madrasah Authority",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+            lblStatus.ForeColor = UITheme.Warning;
+            lblStatus.Text = $"Blocked: {student.FullName} · due ৳{dues:N2}. SMS ready — contact Madrasah Authority.";
+        }
+
         private async void btnIssue_Click(object? sender, EventArgs e)
         {
             if (DesignTime.IsActive)
@@ -129,13 +154,30 @@ namespace StudentManagement.Desktop.Forms
                 }
 
                 btnIssue.Enabled = false;
+
+                // No admin override on admit print — dues must be cleared first.
+                var clearance = await Exams.VerifyClearanceAsync(
+                    studentId.Value, termId.Value, adminOverride: false);
+
+                if (!clearance.IsCleared)
+                {
+                    var student = _lookup.FirstOrDefault(s => s.StudentId == studentId.Value)
+                                  ?? await Students.GetByIdAsync(studentId.Value);
+                    if (student != null)
+                        ShowDueBlockedMessage(student, clearance.DuesAtClearance);
+                    else
+                    {
+                        lblStatus.ForeColor = UITheme.Danger;
+                        lblStatus.Text = $"Cannot print. Outstanding dues: ৳{clearance.DuesAtClearance:N2}. Contact Madrasah Authority.";
+                    }
+                    return;
+                }
+
                 var card = await Exams.IssueAdmitCardAsync(
                     studentId.Value,
                     termId.Value,
                     AppSession.Current?.UserId ?? 0,
-                    chkOverride.Checked,
-                    txtReason.Text.Trim(),
-                    AppSession.Current?.Role);
+                    adminOverride: false);
 
                 using var preview = new frmAdmitCardPreview(
                     new[] { card },
@@ -185,7 +227,6 @@ namespace StudentManagement.Desktop.Forms
                     ? (_classes.FirstOrDefault(c => c.ClassId == id)?.ClassName ?? $"Class {id}")
                     : "All Classes";
 
-                // Bulk uses the same class + search filter currently shown in the student list.
                 var students = FilterLookup(classId, txtStudentSearch.Text);
 
                 if (students.Count == 0)
@@ -196,27 +237,53 @@ namespace StudentManagement.Desktop.Forms
                 }
 
                 var issued = new List<AdmitCardDto>();
-                var skipped = 0;
+                var blocked = new List<(StudentDto Student, decimal Dues)>();
 
                 foreach (var s in students)
                 {
+                    var clearance = await Exams.VerifyClearanceAsync(
+                        s.StudentId, termId.Value, adminOverride: false);
+                    if (!clearance.IsCleared)
+                    {
+                        blocked.Add((s, clearance.DuesAtClearance));
+                        continue;
+                    }
+
                     try
                     {
                         var card = await Exams.IssueAdmitCardAsync(
                             s.StudentId, termId.Value, AppSession.Current?.UserId ?? 0,
-                            chkOverride.Checked, txtReason.Text.Trim(), AppSession.Current?.Role);
+                            adminOverride: false);
                         issued.Add(card);
                     }
                     catch
                     {
-                        skipped++;
+                        blocked.Add((s, clearance.DuesAtClearance));
                     }
+                }
+
+                if (blocked.Count > 0)
+                {
+                    var smsLog = new StringBuilder();
+                    smsLog.AppendLine($"{blocked.Count} student(s) have dues — admit card skipped.");
+                    smsLog.AppendLine("Send SMS / ask guardian to contact Madrasah Authority:");
+                    smsLog.AppendLine();
+                    foreach (var (student, dues) in blocked.Take(15))
+                        smsLog.AppendLine("• " + BuildDueSms(student, dues));
+                    if (blocked.Count > 15)
+                        smsLog.AppendLine($"… and {blocked.Count - 15} more.");
+
+                    MessageBox.Show(
+                        smsLog.ToString(),
+                        "Due students — SMS / Madrasah Authority",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
                 }
 
                 if (issued.Count == 0)
                 {
                     lblStatus.ForeColor = UITheme.Warning;
-                    lblStatus.Text = $"No admit cards issued for {classLabel}. {skipped} student(s) blocked (dues) or failed.";
+                    lblStatus.Text = $"No admit cards for {classLabel}. {blocked.Count} blocked (dues). Only cleared students can print.";
                     return;
                 }
 
@@ -229,7 +296,7 @@ namespace StudentManagement.Desktop.Forms
                 {
                     lblStatus.ForeColor = UITheme.Success;
                     lblStatus.Text = $"Batch printed ({classLabel}): {issued.Count} card(s)" +
-                                     (skipped > 0 ? $", {skipped} skipped." : ".") +
+                                     (blocked.Count > 0 ? $", {blocked.Count} skipped (dues/SMS)." : ".") +
                                      $" PDF: {preview.SavedPdfPath}";
                 }
                 else

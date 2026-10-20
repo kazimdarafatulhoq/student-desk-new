@@ -16,8 +16,6 @@ namespace StudentManagement.Desktop.Forms
         private ComboBox cboStudent;
         private Label lblClass;
         private ComboBox cboClass;
-        private CheckBox chkOverride;
-        private TextBox txtReason;
         private Button btnIssue;
         private Button btnBatch;
         private Label lblStatus;
@@ -43,8 +41,6 @@ namespace StudentManagement.Desktop.Forms
             this.cboStudent = new System.Windows.Forms.ComboBox();
             this.lblClass = new System.Windows.Forms.Label();
             this.cboClass = new System.Windows.Forms.ComboBox();
-            this.chkOverride = new System.Windows.Forms.CheckBox();
-            this.txtReason = new System.Windows.Forms.TextBox();
             this.btnIssue = new System.Windows.Forms.Button();
             this.btnBatch = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -64,7 +60,7 @@ namespace StudentManagement.Desktop.Forms
             //
             // pnlCard
             //
-            this.pnlCard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(20)))), ((int)(((byte)(48)))));
+            this.pnlCard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(14)))), ((int)(((byte)(20)))));
             this.pnlCard.Controls.Add(this.lblTerm);
             this.pnlCard.Controls.Add(this.cboTerm);
             this.pnlCard.Controls.Add(this.lblStudent);
@@ -72,13 +68,11 @@ namespace StudentManagement.Desktop.Forms
             this.pnlCard.Controls.Add(this.cboStudent);
             this.pnlCard.Controls.Add(this.lblClass);
             this.pnlCard.Controls.Add(this.cboClass);
-            this.pnlCard.Controls.Add(this.chkOverride);
-            this.pnlCard.Controls.Add(this.txtReason);
             this.pnlCard.Controls.Add(this.btnIssue);
             this.pnlCard.Controls.Add(this.btnBatch);
             this.pnlCard.Location = new System.Drawing.Point(16, 55);
             this.pnlCard.Name = "pnlCard";
-            this.pnlCard.Size = new System.Drawing.Size(760, 350);
+            this.pnlCard.Size = new System.Drawing.Size(760, 260);
             this.pnlCard.TabIndex = 1;
             this.pnlCard.Tag = "card";
             //
@@ -152,42 +146,21 @@ namespace StudentManagement.Desktop.Forms
             this.cboClass.TabIndex = 6;
             this.cboClass.SelectedIndexChanged += new System.EventHandler(this.cboClass_SelectedIndexChanged);
             //
-            // chkOverride
-            //
-            this.chkOverride.AutoSize = true;
-            this.chkOverride.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(204)))), ((int)(((byte)(21)))));
-            this.chkOverride.Location = new System.Drawing.Point(20, 185);
-            this.chkOverride.Name = "chkOverride";
-            this.chkOverride.Size = new System.Drawing.Size(220, 19);
-            this.chkOverride.TabIndex = 7;
-            this.chkOverride.Text = "Allow admin override for dues";
-            //
-            // txtReason
-            //
-            this.txtReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(24)))), ((int)(((byte)(39)))));
-            this.txtReason.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtReason.ForeColor = System.Drawing.Color.White;
-            this.txtReason.Location = new System.Drawing.Point(20, 215);
-            this.txtReason.Name = "txtReason";
-            this.txtReason.PlaceholderText = "Override reason (required when override is checked)";
-            this.txtReason.Size = new System.Drawing.Size(700, 23);
-            this.txtReason.TabIndex = 8;
-            //
             // btnIssue
             //
-            this.btnIssue.Location = new System.Drawing.Point(20, 270);
+            this.btnIssue.Location = new System.Drawing.Point(20, 190);
             this.btnIssue.Name = "btnIssue";
             this.btnIssue.Size = new System.Drawing.Size(190, 36);
-            this.btnIssue.TabIndex = 9;
+            this.btnIssue.TabIndex = 7;
             this.btnIssue.Text = "Preview & Print Single";
             this.btnIssue.Click += new System.EventHandler(this.btnIssue_Click);
             //
             // btnBatch
             //
-            this.btnBatch.Location = new System.Drawing.Point(220, 270);
+            this.btnBatch.Location = new System.Drawing.Point(220, 190);
             this.btnBatch.Name = "btnBatch";
             this.btnBatch.Size = new System.Drawing.Size(200, 36);
-            this.btnBatch.TabIndex = 10;
+            this.btnBatch.TabIndex = 8;
             this.btnBatch.Tag = "success";
             this.btnBatch.Text = "Preview & Print Bulk";
             this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
@@ -195,18 +168,18 @@ namespace StudentManagement.Desktop.Forms
             // lblStatus
             //
             this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(147)))), ((int)(((byte)(166)))));
-            this.lblStatus.Location = new System.Drawing.Point(16, 420);
+            this.lblStatus.Location = new System.Drawing.Point(16, 330);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(760, 50);
+            this.lblStatus.Size = new System.Drawing.Size(760, 70);
             this.lblStatus.TabIndex = 2;
-            this.lblStatus.Text = "Search/filter a student for single print, or choose a class and use bulk print.";
+            this.lblStatus.Text = "Only fee-cleared students can print. Students with dues are blocked and shown an SMS to contact Madrasah Authority.";
             //
             // frmAdmitCardPrint
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(9)))), ((int)(((byte)(12)))), ((int)(((byte)(23)))));
-            this.ClientSize = new System.Drawing.Size(820, 500);
+            this.ClientSize = new System.Drawing.Size(820, 420);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.pnlCard);
             this.Controls.Add(this.lblStatus);

@@ -100,7 +100,9 @@ namespace StudentManagement.BusinessLayer
         {
             var clearance = VerifyClearance(studentId, examTermId, adminOverride, overrideReason, issuedByUserId, role);
             if (!clearance.IsCleared)
-                throw new InvalidOperationException($"Cannot issue admit card. Outstanding dues: ৳{clearance.DuesAtClearance:N2}");
+                throw new InvalidOperationException(
+                    $"Cannot issue admit card. Outstanding dues: ৳{clearance.DuesAtClearance:N2}. " +
+                    "Contact Madrasah Authority to clear dues. Admit card prints only when there is no due.");
 
             var student = new StudentManager().GetById(studentId)!;
             var term = GetActiveTerms().First(t => t.ExamTermId == examTermId);
