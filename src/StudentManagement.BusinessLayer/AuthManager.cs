@@ -204,7 +204,7 @@ namespace StudentManagement.BusinessLayer
                 "Search" => true,
                 "FeeCollection" => role is UserRole.SuperAdmin or UserRole.AccountsManager,
                 "Ledger" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.AdmissionOfficer,
-                "ExamClearance" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.Teacher,
+                "ExamClearance" => role is UserRole.SuperAdmin,
                 "AdmitCard" => role is UserRole.SuperAdmin or UserRole.AccountsManager or UserRole.Teacher,
                 "ClassSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
                 "SectionSetup" => role is UserRole.SuperAdmin or UserRole.AdmissionOfficer,
